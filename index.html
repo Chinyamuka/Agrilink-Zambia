@@ -1,1096 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AgriLink Zambia - Market Information & Produce Linkage Platform</title>
-<meta name="theme-color" content="#1f3d2e">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f3d2e'/%3E%3Cpath d='M9 23l7-14 7 14M12 18h8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<style>
-/* ---------- Design tokens (legacy variable names kept so existing inline styles still resolve) ---------- */
-:root {
-    --primary: #2f5d46; --primary-dark: #1f3d2e; --primary-light: #5e8a6f;
-    --secondary: #3e4c59; --secondary-dark: #2b3641; --danger: #9b3b2f;
-    --warning: #b7791f; --info: #35506b; --bg: #f3f4f1; --card-bg: #ffffff;
-    --text: #1d2722; --text-light: #5b675f; --border: #dce0d9; --border-soft: #eceeea;
-    --surface-alt: #f7f8f6;
-    --success-bg: #e6efe8; --info-bg: #e7edf3; --warn-bg: #f6efdd; --danger-bg: #f5e6e3;
-    --warn-text: #7a5a12;
-    --shadow: none; --radius: 6px;
-    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body { font-family: var(--font); font-size: 14px; line-height: 1.5; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
-button, input, select, textarea { font: inherit; color: inherit; }
-h1, h2, h3, h4 { line-height: 1.25; letter-spacing: -0.01em; }
-:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriLink Zambia | Cloud Platform</title>
+    <!-- Google Fonts for professional typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f766e; --primary-hover: #0d9488; --bg-body: #f8fafc;
+            --bg-card: #ffffff; --text-main: #0f172a; --text-muted: #64748b;
+            --border: #e2e8f0; --danger: #dc2626; --success: #16a34a; --warning: #d97706;
+            --radius: 8px; --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-/* ---------- Sign in / register ---------- */
-.auth-container { display: flex; min-height: 100vh; background: var(--card-bg); }
-.auth-brand { flex: 1; background: var(--primary-dark); color: #fff; display: flex; align-items: center; padding: 64px;
-    background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 26px); }
-.auth-brand-inner { max-width: 440px; }
-.auth-brand h2 { font-size: 34px; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 28px; }
-.auth-points { list-style: none; border-top: 1px solid rgba(255,255,255,0.18); }
-.auth-points li { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.18); font-size: 15px; color: rgba(255,255,255,0.86); }
-.auth-brand .auth-note { margin-top: 28px; font-size: 12.5px; color: rgba(255,255,255,0.6); }
-.auth-card { flex: 0 0 540px; max-width: 100%; display: flex; flex-direction: column; justify-content: center; padding: 48px 64px; background: var(--card-bg); }
-.auth-card h1 { color: var(--primary-dark); margin-bottom: 6px; font-size: 24px; font-weight: 650; }
-.auth-card .subtitle { color: var(--text-light); margin-bottom: 28px; font-size: 13.5px; }
-.auth-card .btn-primary { width: 100%; padding: 11px 16px; }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: var(--text); }
-.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; background: #fff; border: 1px solid #c9cfc6; border-radius: var(--radius); font-size: 14px; transition: border-color 0.15s, box-shadow 0.15s; }
-.form-group input::placeholder, .form-group textarea::placeholder { color: #98a39b; }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(47, 93, 70, 0.16); }
-.form-group select, .search-bar select { appearance: none; -webkit-appearance: none; padding-right: 34px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235b675f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 12px center; }
-.form-group input[type="checkbox"] { width: auto; accent-color: var(--primary); }
+        /* --- AUTH SCREEN --- */
+        .auth-wrapper { display: flex; justify-content: center; align-items: center; flex: 1; padding: 20px; }
+        .auth-card { background: var(--bg-card); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow-md); width: 100%; max-width: 400px; border: 1px solid var(--border); }
+        .auth-card h1 { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+        .auth-card p.sub { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
+        
+        /* --- FORMS --- */
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1); }
+        
+        /* --- BUTTONS --- */
+        .btn { padding: 10px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg-body); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        
+        /* --- LAYOUT & TABS --- */
+        .navbar { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 0 24px; height: 60px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { font-weight: 700; font-size: 18px; color: var(--primary); }
+        .nav-user { display: flex; align-items: center; gap: 16px; font-size: 14px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; width: 100%; }
+        
+        .tabs-container { border-bottom: 1px solid var(--border); margin-bottom: 24px; display: flex; gap: 24px; }
+        .tab-btn { background: none; border: none; padding: 12px 0; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; margin-bottom: -1px; }
+        .tab-btn:hover { color: var(--text-main); }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-/* ---------- Buttons ---------- */
-.btn { padding: 9px 16px; border: 1px solid transparent; border-radius: var(--radius); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; line-height: 1.2; }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-primary:hover { background: var(--primary-dark); }
-.btn-secondary { background: var(--secondary); color: #fff; }
-.btn-secondary:hover { background: var(--secondary-dark); }
-.btn-danger { background: var(--danger-bg); color: var(--danger); border-color: #e6c9c4; }
-.btn-danger:hover { background: #efd6d1; }
-.btn-outline { background: #fff; border-color: #c9cfc6; color: var(--text); }
-.btn-outline:hover { background: var(--surface-alt); border-color: #aeb6ab; }
-.btn-sm { padding: 5px 11px; font-size: 12.5px; }
-td .btn + .btn { margin-left: 6px; }
-.auth-toggle { margin-top: 18px; font-size: 13.5px; color: var(--text-light); }
-.auth-toggle a, .demo-links a { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none; }
-.auth-toggle a:hover, .demo-links a:hover { text-decoration: underline; }
-.demo-links { margin-top: 20px; font-size: 13px; color: var(--text-light); padding-top: 18px; border-top: 1px solid var(--border-soft); }
-.demo-links a { margin: 0 4px; }
-.demo-links a:first-child { margin-left: 2px; }
+        /* --- CARDS & TABLES --- */
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); margin-bottom: 24px; overflow: hidden; }
+        .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .card-body { padding: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { padding: 12px 20px; background: #f8fafc; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; }
+        td { padding: 12px 20px; border-bottom: 1px solid var(--border); color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: capitalize; }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-info { background: #e0f2fe; color: #075985; }
 
-/* ---------- Alerts ---------- */
-.alert { padding: 11px 14px; border-radius: var(--radius); margin-bottom: 16px; font-size: 13.5px; border: 1px solid; }
-.alert-error { background: var(--danger-bg); color: var(--danger); border-color: #e6c9c4; }
-.alert-success { background: var(--success-bg); color: var(--primary-dark); border-color: #c8dacd; }
-.alert-info { background: var(--info-bg); color: var(--info); border-color: #cbd8e4; }
-.alert-warning { background: var(--warn-bg); color: var(--warn-text); border-color: #e8d9b0; }
+        /* --- MODALS --- */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--bg-card); width: 100%; max-width: 500px; border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; animation: modalIn 0.2s ease-out; }
+        @keyframes modalIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc; }
+        .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
 
-/* ---------- App shell ---------- */
-.app-container { display: none; min-height: 100vh; }
-.app-container.active { display: flex; }
-.sidebar { width: 248px; background: var(--primary-dark); color: #fff; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; z-index: 100; transition: transform 0.25s; }
-.sidebar-header { padding: 22px 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.sidebar-header h2 { font-size: 17px; font-weight: 650; margin-bottom: 2px; letter-spacing: -0.01em; }
-.sidebar-header h2 span { font-weight: 400; color: rgba(255,255,255,0.7); }
-.sidebar-header p { font-size: 12px; color: rgba(255,255,255,0.6); }
-.sidebar-user { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
-.avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.14); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0; }
-.sidebar-user-info .name { font-weight: 600; font-size: 13.5px; }
-.sidebar-user-info .role { font-size: 12px; color: rgba(255,255,255,0.6); text-transform: capitalize; }
-.nav-menu { list-style: none; padding: 10px 0; flex: 1; }
-.nav-menu li a { display: flex; align-items: center; padding: 10px 20px; color: rgba(255,255,255,0.72); text-decoration: none; font-size: 13.5px; transition: background 0.15s, color 0.15s; cursor: pointer; border-left: 3px solid transparent; }
-.nav-menu li a:hover { background: rgba(255,255,255,0.06); color: #fff; }
-.nav-menu li a.active { background: rgba(255,255,255,0.1); color: #fff; border-left-color: #a8c3b0; font-weight: 600; }
-.sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-.sidebar-footer a { color: rgba(255,255,255,0.7); cursor: pointer; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
-.sidebar-footer a:hover { color: #fff; }
-.main-content { margin-left: 248px; flex: 1; min-width: 0; min-height: 100vh; }
-.topbar { background: var(--card-bg); padding: 14px 32px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
-.topbar h2 { font-size: 18px; font-weight: 600; color: var(--text); }
-.topbar-right { display: flex; align-items: center; gap: 16px; }
-.page-content { padding: 28px 32px 40px; max-width: 1400px; }
+        /* --- RECEIPT SPECIFIC STYLES --- */
+        .receipt-box { border: 1px dashed var(--border); padding: 20px; border-radius: var(--radius); background: #fff; font-family: monospace; font-size: 13px; }
+        .receipt-header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .receipt-total { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 16px; border-top: 2px dashed var(--border); font-weight: bold; font-size: 16px; }
+        .receipt-stamp { text-align: center; margin-top: 20px; color: var(--success); font-weight: bold; border: 2px solid var(--success); padding: 8px; border-radius: 4px; transform: rotate(-5deg); opacity: 0.8; }
 
-/* ---------- Badges ---------- */
-.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; line-height: 1.5; white-space: nowrap; }
-.badge::first-letter { text-transform: uppercase; }
-.badge-verified, .badge-success { background: var(--success-bg); color: var(--primary-dark); }
-.badge-pending, .badge-warning { background: var(--warn-bg); color: var(--warn-text); }
-.badge-info { background: var(--info-bg); color: var(--info); }
-.badge-rejected, .badge-danger { background: var(--danger-bg); color: var(--danger); }
-
-/* ---------- Cards, stats, tables ---------- */
-.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; margin-bottom: 20px; }
-.card h3 { font-size: 16px; font-weight: 600; margin: 0 0 16px; color: var(--text); }
-.card .flex > h3 { margin-bottom: 0; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
-.stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; }
-.stat-info { display: flex; flex-direction: column-reverse; gap: 4px; }
-.stat-info .value { font-size: 28px; font-weight: 600; line-height: 1.15; color: var(--text); letter-spacing: -0.02em; }
-.stat-info .label { font-size: 13px; color: var(--text-light); }
-.table-container { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-thead th { background: var(--surface-alt); text-align: left; padding: 10px 16px; font-weight: 600; color: var(--text-light); font-size: 12.5px; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border); white-space: nowrap; }
-tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
-tbody tr:last-child td { border-bottom: none; }
-.table-container td { white-space: nowrap; }
-tbody tr:hover { background: #fafbf9; }
-.empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
-.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
-
-/* ---------- Modal ---------- */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16, 28, 21, 0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-.modal-overlay.active { display: flex; }
-.modal { background: var(--card-bg); border-radius: 8px; box-shadow: 0 12px 40px rgba(16, 28, 21, 0.25); width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; }
-.modal-header { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.modal-header h3 { font-size: 16px; font-weight: 600; }
-.modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light); line-height: 1; padding: 0 4px; }
-.modal-close:hover { color: var(--text); }
-.modal-body { padding: 22px; }
-.modal-body table td { padding: 9px 0; }
-.modal-body table td:first-child { width: 36%; color: var(--text-light); font-weight: 500; }
-.modal-body table td.fw-bold { font-weight: 600; }
-.modal-body table td:first-child.fw-bold { font-weight: 500; }
-.modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); background: var(--surface-alt); display: flex; justify-content: flex-end; gap: 10px; border-radius: 0 0 8px 8px; }
-
-/* ---------- Comparison cards and timeline ---------- */
-.compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 4px; }
-.compare-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: #fff; }
-.compare-card.best { border-color: var(--primary); background: #f3f7f4; box-shadow: inset 0 0 0 1px var(--primary); }
-.compare-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-.compare-card .price { font-size: 21px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
-.compare-card .meta { font-size: 12.5px; color: var(--text-light); margin-top: 4px; }
-.best-label { font-size: 12px; font-weight: 600; color: var(--primary-dark); margin-top: 8px; }
-.timeline { position: relative; padding-left: 30px; }
-.timeline::before { content: ''; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 2px; background: var(--border); }
-.timeline-item { position: relative; padding-bottom: 18px; }
-.timeline-item::before { content: ''; position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #c9cfc6; border: 2px solid #fff; }
-.timeline-item.completed::before { background: var(--primary); }
-.timeline-item.current::before { background: var(--warning); box-shadow: 0 0 0 4px rgba(183, 121, 31, 0.18); }
-.timeline-item .desc { font-weight: 600; font-size: 14px; }
-
-/* ---------- Filters ---------- */
-.search-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-.search-bar input, .search-bar select { padding: 9px 12px; border: 1px solid #c9cfc6; border-radius: var(--radius); font-size: 14px; background-color: #fff; transition: border-color 0.15s, box-shadow 0.15s; }
-.search-bar input { flex: 1; min-width: 200px; }
-.search-bar input:focus, .search-bar select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(47, 93, 70, 0.16); }
-.menu-toggle { display: none; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text); }
-
-@media (max-width: 1000px) {
-    .auth-brand { display: none; }
-    .auth-card { flex: 1; padding: 40px 32px; }
-    .auth-card > * { width: 100%; max-width: 420px; margin-left: auto; margin-right: auto; }
-}
-@media (max-width: 900px) {
-    .sidebar { transform: translateX(-100%); }
-    .sidebar.open { transform: translateX(0); box-shadow: 0 0 40px rgba(0,0,0,0.3); }
-    .main-content { margin-left: 0; }
-    .menu-toggle { display: block; }
-    .page-content { padding: 20px 16px 32px; }
-    .topbar { padding: 12px 16px; }
-}
-@media (max-width: 600px) {
-    .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-    .stat-card { padding: 14px 16px; }
-    #topbarUser { display: none; }
-    .auth-card { padding: 32px 20px; }
-    .card { padding: 18px 16px; }
-}
-
-/* ---------- Utilities ---------- */
-.text-center { text-align: center; }
-.mt-16 { margin-top: 16px; }
-.mb-16 { margin-bottom: 16px; }
-.flex { display: flex; }
-.gap-8 { gap: 8px; }
-.gap-16 { gap: 16px; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.flex-wrap { flex-wrap: wrap; }
-.text-muted { color: var(--text-light); font-size: 13px; }
-.fw-bold { font-weight: 600; }
-.loading { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 15px; }
-</style>
+        .alert { padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px; font-size: 14px; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .text-muted { color: var(--text-muted); } .fw-bold { font-weight: 600; }
+    </style>
 </head>
 <body>
 
-<div id="authScreen" class="auth-container">
-    <div class="auth-brand">
-        <div class="auth-brand-inner">
-            <h2>Know the price. Find the buyer. Track the sale.</h2>
-            <ul class="auth-points">
-                <li>Current market prices by crop and market</li>
-                <li>Produce listings with price comparison</li>
-                <li>Offers and delivery status tracked in one record</li>
-            </ul>
-            <p class="auth-note">ICT431 Capstone Project &middot; Mulungushi University</p>
-        </div>
-    </div>
+<!-- AUTH -->
+<div id="authScreen" class="auth-wrapper">
     <div class="auth-card">
         <h1>AgriLink Zambia</h1>
-        <p class="subtitle">Cloud-Based Agricultural Market Information &amp; Produce-Linkage Platform</p>
+        <p class="sub">Cloud Agricultural Platform</p>
         <div id="authAlert"></div>
         <div id="loginForm">
-            <div class="form-group"><label>Phone Number or Email</label><input type="text" id="loginIdentifier" placeholder="e.g. 0977123456"></div>
-            <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Enter your password"></div>
-            <button class="btn btn-primary" onclick="handleLogin()">Login</button>
-            <div class="auth-toggle">Don't have an account? <a onclick="showRegister()">Register here</a></div>
-            <div class="demo-links">Demo: <a onclick="fillDemoAccount('farmer')">Farmer</a> | <a onclick="fillDemoAccount('buyer')">Buyer</a> | <a onclick="fillDemoAccount('admin')">Admin</a></div>
-        </div>
-        <div id="registerForm" style="display:none;">
-            <div class="form-group"><label>Full Name</label><input type="text" id="regName"></div>
-            <div class="form-group"><label>Phone Number</label><input type="text" id="regPhone"></div>
-            <div class="form-group"><label>Email (optional)</label><input type="email" id="regEmail"></div>
-            <div class="form-group"><label>I am a...</label>
-                <select id="regRole"><option value="">Select role</option><option value="farmer">Farmer</option><option value="cooperative">Cooperative</option><option value="buyer">Buyer</option><option value="transporter">Transporter</option></select>
-            </div>
-            <div class="form-group"><label>District / Location</label><input type="text" id="regLocation"></div>
-            <div class="form-group"><label>Password</label><input type="password" id="regPassword" placeholder="Minimum 6 characters"></div>
-            <button class="btn btn-primary" onclick="handleRegister()">Create Account</button>
-            <div class="auth-toggle">Already have an account? <a onclick="showLogin()">Login here</a></div>
+            <div class="form-group"><label>Phone or Email</label><input type="text" id="loginIdentifier" class="form-control" placeholder="e.g. 0977123456"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="loginPassword" class="form-control" placeholder="••••••••"></div>
+            <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
         </div>
     </div>
 </div>
 
-<div id="appContainer" class="app-container">
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h2>AgriLink <span>Zambia</span></h2><p>Market Information &amp; Linkage</p></div>
-        <div class="sidebar-user">
-            <div class="avatar" id="sidebarAvatar">?</div>
-            <div class="sidebar-user-info"><div class="name" id="sidebarName">User</div><div class="role" id="sidebarRole">role</div></div>
+<!-- APP -->
+<div id="appScreen" style="display: none; flex-direction: column; min-height: 100vh;">
+    <nav class="navbar">
+        <div class="nav-brand">🌾 AgriLink Zambia</div>
+        <div class="nav-user">
+            <span class="text-muted" id="navUserName"></span>
+            <button class="btn btn-outline btn-sm" onclick="handleLogout()">Logout</button>
         </div>
-        <ul class="nav-menu" id="navMenu"></ul>
-        <div class="sidebar-footer"><a onclick="handleLogout()">Logout</a></div>
-    </aside>
-    <div class="main-content">
-        <div class="topbar">
-            <div class="flex items-center gap-16">
-                <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
-                <h2 id="pageTitle">Dashboard</h2>
-            </div>
-            <div class="topbar-right"><span id="topbarUser" class="text-muted"></span></div>
-        </div>
-        <div class="page-content" id="pageContent"></div>
+    </nav>
+    <div class="container">
+        <div class="tabs-container" id="mainTabs"></div>
+        <div id="tabContent"></div>
     </div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay">
+<!-- GENERIC MODAL -->
+<div class="modal-overlay" id="modal">
     <div class="modal">
-        <div class="modal-header"><h3 id="modalTitle">Modal</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+        <div class="modal-header"><span id="modalTitle">Modal</span><button class="close-btn" onclick="closeModal()">&times;</button></div>
         <div class="modal-body" id="modalBody"></div>
         <div class="modal-footer" id="modalFooter"></div>
     </div>
 </div>
 
 <script>
-/* ============================================================
-   DATA LAYER - Supabase REST API
-   ============================================================ */
-
+/* --- DATA LAYER --- */
 const SUPABASE_URL = 'https://fsepjaslhgvwnxouaney.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MWcMNMAs1XFjgODMv8KcIA_7Jq-5QT3';
 
 const DB = {
-    _headers() {
-        return {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-        };
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    _cache: {},
+    async get(table, forceRefresh = false) {
+        if (this._cache[table] && !forceRefresh) return this._cache[table];
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`, { headers: this.headers });
+        if(!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        this._cache[table] = data;
+        return data;
     },
-
-    async _get(table, query = '') {
-        const url = `${SUPABASE_URL}/rest/v1/${table}${query}`;
-        const res = await fetch(url, { headers: this._headers() });
-        if (!res.ok) throw new Error(`${table} fetch failed: ${await res.text()}`);
+    clearCache(table) { if (table) delete this._cache[table]; else this._cache = {}; },
+    async insert(table, data) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, { method: 'POST', headers: this.headers, body: JSON.stringify(data) });
+        if(!res.ok) throw new Error(await res.text());
+        this.clearCache(table);
         return res.json();
     },
-
-    async _insert(table, data) {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-            method: 'POST',
-            headers: this._headers(),
-            body: JSON.stringify(data)
-        });
-        if (!res.ok) throw new Error(`${table} insert failed: ${await res.text()}`);
+    async update(table, id, data) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, { method: 'PATCH', headers: this.headers, body: JSON.stringify(data) });
+        if(!res.ok) throw new Error(await res.text());
+        this.clearCache(table);
         return res.json();
-    },
-
-    async _update(table, matchCol, matchVal, updates) {
-        const url = `${SUPABASE_URL}/rest/v1/${table}?${matchCol}=eq.${encodeURIComponent(matchVal)}`;
-        const res = await fetch(url, {
-            method: 'PATCH',
-            headers: this._headers(),
-            body: JSON.stringify(updates)
-        });
-        if (!res.ok) throw new Error(`${table} update failed: ${await res.text()}`);
-        return res.json();
-    },
-
-    async _delete(table, matchCol, matchVal) {
-        const url = `${SUPABASE_URL}/rest/v1/${table}?${matchCol}=eq.${encodeURIComponent(matchVal)}`;
-        const res = await fetch(url, { method: 'DELETE', headers: this._headers() });
-        if (!res.ok) throw new Error(`${table} delete failed: ${await res.text()}`);
-        return true;
-    },
-
-    // ---- USERS ----
-    async getUsers() { return this._get('users', '?select=*'); },
-    async saveUser(user) {
-        if (!user.id) user.id = 'u_' + Date.now();
-        const { id, name, phone, email, role, location, password, verified, createdAt } = user;
-        await this._insert('users', {
-            id, name, phone, email: email || null, role, location, password,
-            verified: verified || false, created_at: createdAt || new Date().toISOString()
-        });
-        return id;
-    },
-    async findUser(identifier) {
-        const users = await this.getUsers();
-        return users.find(u => u.phone === identifier || u.email === identifier) || null;
-    },
-    async getUserById(id) {
-        const rows = await this._get('users', `?id=eq.${encodeURIComponent(id)}&select=*`);
-        return rows[0] || null;
-    },
-    async updateUser(id, updates) {
-        const map = {};
-        if (updates.name !== undefined) map.name = updates.name;
-        if (updates.phone !== undefined) map.phone = updates.phone;
-        if (updates.email !== undefined) map.email = updates.email;
-        if (updates.role !== undefined) map.role = updates.role;
-        if (updates.location !== undefined) map.location = updates.location;
-        if (updates.password !== undefined) map.password = updates.password;
-        if (updates.verified !== undefined) map.verified = updates.verified;
-        await this._update('users', 'id', id, map);
-    },
-    async deleteUser(id) { await this._delete('users', 'id', id); },
-
-    // ---- LISTINGS ----
-    async getListings() {
-        const rows = await this._get('listings', '?select=*');
-        return rows.map(this._mapListing);
-    },
-    _mapListing(r) {
-        return {
-            id: r.id, farmerId: r.farmer_id, farmerName: r.farmer_name,
-            crop: r.crop, quantity: Number(r.quantity), unit: r.unit,
-            pricePerUnit: Number(r.price_per_unit), location: r.location,
-            description: r.description, status: r.status, createdAt: r.created_at
-        };
-    },
-    async addListing(listing) {
-        listing.id = listing.id || 'L' + Date.now();
-        await this._insert('listings', {
-            id: listing.id, farmer_id: listing.farmerId, farmer_name: listing.farmerName,
-            crop: listing.crop, quantity: listing.quantity, unit: listing.unit,
-            price_per_unit: listing.pricePerUnit, location: listing.location,
-            description: listing.description || null, status: listing.status || 'available',
-            created_at: listing.createdAt || new Date().toISOString()
-        });
-        return listing.id;
-    },
-    async updateListing(id, updates) {
-        const map = {};
-        if (updates.status !== undefined) map.status = updates.status;
-        if (updates.quantity !== undefined) map.quantity = updates.quantity;
-        if (updates.pricePerUnit !== undefined) map.price_per_unit = updates.pricePerUnit;
-        await this._update('listings', 'id', id, map);
-    },
-    async deleteListing(id) { await this._delete('listings', 'id', id); },
-
-    // ---- PRICES ----
-    async getPrices() {
-        const rows = await this._get('prices', '?select=*');
-        return rows.map(r => ({
-            id: r.id, crop: r.crop, market: r.market,
-            price: Number(r.price), unit: r.unit, updated: r.updated
-        }));
-    },
-    async addPrice(price) {
-        price.id = price.id || 'P' + Date.now();
-        await this._insert('prices', {
-            id: price.id, crop: price.crop, market: price.market,
-            price: price.price, unit: price.unit || 'kg',
-            updated: price.updated || new Date().toISOString()
-        });
-        return price.id;
-    },
-    async deletePrice(id) { await this._delete('prices', 'id', id); },
-
-    // ---- TRANSACTIONS ----
-    async getTransactions() {
-        const rows = await this._get('transactions', '?select=*');
-        return rows.map(this._mapTxn);
-    },
-    _mapTxn(r) {
-        return {
-            id: r.id, listingId: r.listing_id, crop: r.crop,
-            quantity: Number(r.quantity), unit: r.unit,
-            pricePerUnit: Number(r.price_per_unit), totalAmount: Number(r.total_amount),
-            buyerId: r.buyer_id, sellerId: r.seller_id,
-            needTransport: r.need_transport, transporterId: r.transporter_id,
-            transportFee: r.transport_fee ? Number(r.transport_fee) : null,
-            transportStatus: r.transport_status, status: r.status, note: r.note,
-            createdAt: r.created_at, updatedAt: r.updated_at
-        };
-    },
-    async addTransaction(txn) {
-        txn.id = txn.id || 'T' + Date.now();
-        await this._insert('transactions', {
-            id: txn.id, listing_id: txn.listingId, crop: txn.crop,
-            quantity: txn.quantity, unit: txn.unit,
-            price_per_unit: txn.pricePerUnit, total_amount: txn.totalAmount,
-            buyer_id: txn.buyerId, seller_id: txn.sellerId,
-            need_transport: txn.needTransport || false,
-            transporter_id: txn.transporterId || null,
-            transport_fee: txn.transportFee || null,
-            transport_status: txn.transportStatus || null,
-            status: txn.status || 'pending', note: txn.note || null,
-            created_at: txn.createdAt || new Date().toISOString(),
-            updated_at: txn.updatedAt || new Date().toISOString()
-        });
-        return txn.id;
-    },
-    async updateTransaction(id, updates) {
-        const map = {};
-        if (updates.status !== undefined) map.status = updates.status;
-        if (updates.transporterId !== undefined) map.transporter_id = updates.transporterId;
-        if (updates.transportFee !== undefined) map.transport_fee = updates.transportFee;
-        if (updates.transportStatus !== undefined) map.transport_status = updates.transportStatus;
-        map.updated_at = new Date().toISOString();
-        await this._update('transactions', 'id', id, map);
     }
 };
 
-/* ============================================================
-   AUTH
-   ============================================================ */
-
+/* --- AUTH --- */
 let currentUser = null;
-
-function showLogin() {
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('registerForm').style.display = 'none';
-    document.getElementById('authAlert').innerHTML = '';
-}
-
-function showRegister() {
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('registerForm').style.display = 'block';
-    document.getElementById('authAlert').innerHTML = '';
-}
-
-function showAuthAlert(msg, type = 'error') {
-    document.getElementById('authAlert').innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-}
-
 async function handleLogin() {
-    const identifier = document.getElementById('loginIdentifier').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    if (!identifier || !password) { showAuthAlert('Please enter both fields.'); return; }
-
+    const id = document.getElementById('loginIdentifier').value.trim();
+    const pw = document.getElementById('loginPassword').value;
+    if(!id || !pw) return showAlert('Please enter credentials');
     try {
-        const user = await DB.findUser(identifier);
-        if (!user || user.password !== password) { showAuthAlert('Invalid credentials.'); return; }
-        if (!user.verified) { showAuthAlert('Account pending admin verification.', 'warning'); return; }
-        loginUser(user);
-    } catch (err) {
-        showAuthAlert('Connection error: ' + err.message);
-    }
+        const users = await DB.get('users', true); 
+        const user = users.find(u => (u.phone === id || u.email === id) && u.password === pw);
+        if(!user) return showAlert('Invalid credentials');
+        if(!user.verified) return showAlert('Account pending admin verification');
+        
+        currentUser = user;
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'flex';
+        document.getElementById('navUserName').textContent = user.name + ' (' + user.role + ')';
+        buildTabs();
+    } catch(e) { showAlert('Connection failed: ' + e.message); }
+}
+function showAlert(msg) { document.getElementById('authAlert').innerHTML = `<div class="alert alert-error">${msg}</div>`; }
+function handleLogout() { currentUser = null; DB.clearCache(); document.getElementById('appScreen').style.display = 'none'; document.getElementById('authScreen').style.display = 'flex'; document.getElementById('loginPassword').value = ''; }
+
+/* --- TABS --- */
+function buildTabs() {
+    const tabsContainer = document.getElementById('mainTabs');
+    const contentContainer = document.getElementById('tabContent');
+    let tabs = [];
+    if(currentUser.role === 'admin') tabs = [{ id: 'dashboard', label: 'Dashboard' }, { id: 'users', label: 'User Verification' }, { id: 'prices', label: 'Manage Prices' }];
+    else if(currentUser.role === 'buyer') tabs = [{ id: 'browse', label: 'Browse Produce' }, { id: 'transactions', label: 'My Purchases' }];
+    else if(currentUser.role === 'farmer' || currentUser.role === 'cooperative') tabs = [{ id: 'listings', label: 'My Listings' }, { id: 'offers', label: 'Offers Received' }, { id: 'transactions', label: 'Transactions' }];
+    else if(currentUser.role === 'transporter') tabs = [{ id: 'jobs', label: 'Available Jobs' }, { id: 'transactions', label: 'My Deliveries' }];
+
+    tabsContainer.innerHTML = tabs.map((t, i) => `<button class="tab-btn ${i === 0 ? 'active' : ''}" onclick="switchTab('${t.id}', this)">${t.label}</button>`).join('');
+    contentContainer.innerHTML = tabs.map((t, i) => `<div id="tab-${t.id}" class="tab-content ${i === 0 ? 'active' : ''}"><div class="card"><div class="card-body">Loading data...</div></div></div>`).join('');
+    loadTabData(tabs[0].id);
 }
 
-async function handleRegister() {
-    const name = document.getElementById('regName').value.trim();
-    const phone = document.getElementById('regPhone').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const role = document.getElementById('regRole').value;
-    const location = document.getElementById('regLocation').value.trim();
-    const password = document.getElementById('regPassword').value;
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    loadTabData(tabId);
+}
 
-    if (!name || !phone || !role || !location || !password) { showAuthAlert('Fill all required fields.'); return; }
-    if (password.length < 6) { showAuthAlert('Password must be 6+ chars.'); return; }
-
+/* --- TAB DATA --- */
+async function loadTabData(tabId) {
+    const container = document.getElementById('tab-' + tabId);
     try {
-        if (await DB.findUser(phone)) { showAuthAlert('Phone already registered.'); return; }
-        if (email && await DB.findUser(email)) { showAuthAlert('Email already registered.'); return; }
-
-        await DB.saveUser({ name, phone, email, role, location, password, verified: false, createdAt: new Date().toISOString() });
-        showAuthAlert('Account created. Wait for admin verification.', 'success');
-        setTimeout(() => { showLogin(); document.getElementById('loginIdentifier').value = phone; }, 1500);
-    } catch (err) {
-        showAuthAlert('Error: ' + err.message);
-    }
-}
-
-function fillDemoAccount(role) {
-    const demo = { farmer: ['0977123456','farmer123'], buyer: ['0977000111','buyer123'], admin: ['0966000000','admin123'], transporter: ['0977222333','trans123'] };
-    document.getElementById('loginIdentifier').value = demo[role][0];
-    document.getElementById('loginPassword').value = demo[role][1];
-}
-
-function loginUser(user) {
-    currentUser = user;
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('appContainer').classList.add('active');
-    document.getElementById('sidebarAvatar').textContent = user.name.charAt(0).toUpperCase();
-    document.getElementById('sidebarName').textContent = user.name;
-    document.getElementById('sidebarRole').textContent = user.role;
-    document.getElementById('topbarUser').textContent = `${user.name} (${user.role})`;
-    buildNavMenu();
-    navigate('dashboard');
-}
-
-function handleLogout() {
-    currentUser = null;
-    document.getElementById('appContainer').classList.remove('active');
-    document.getElementById('authScreen').style.display = 'flex';
-    document.getElementById('loginPassword').value = '';
-    showLogin();
-}
-
-/* ============================================================
-   NAVIGATION
-   ============================================================ */
-
-const NAV_ITEMS = {
-    farmer: [
-        { id: 'dashboard', label: 'Dashboard' }, { id: 'prices', label: 'Market Prices' },
-        { id: 'listings', label: 'My Produce Listings' }, { id: 'browse', label: 'Offers Received' },
-        { id: 'transactions', label: 'My Transactions' }
-    ],
-    cooperative: [
-        { id: 'dashboard', label: 'Dashboard' }, { id: 'prices', label: 'Market Prices' },
-        { id: 'listings', label: 'Produce Listings' }, { id: 'browse', label: 'Offers Received' },
-        { id: 'transactions', label: 'Transactions' }
-    ],
-    buyer: [
-        { id: 'dashboard', label: 'Dashboard' }, { id: 'prices', label: 'Market Prices' },
-        { id: 'browse', label: 'Browse Produce' }, { id: 'compare', label: 'Price Comparison' },
-        { id: 'transactions', label: 'My Purchases' }
-    ],
-    transporter: [
-        { id: 'dashboard', label: 'Dashboard' }, { id: 'jobs', label: 'Transport Jobs' },
-        { id: 'transactions', label: 'My Deliveries' }
-    ],
-    admin: [
-        { id: 'dashboard', label: 'Dashboard' }, { id: 'users', label: 'User Verification' },
-        { id: 'prices', label: 'Manage Prices' }, { id: 'listings', label: 'All Listings' },
-        { id: 'transactions', label: 'All Transactions' }
-    ]
-};
-
-function buildNavMenu() {
-    const menu = document.getElementById('navMenu');
-    const items = NAV_ITEMS[currentUser.role] || [];
-    menu.innerHTML = items.map(i => `<li><a data-page="${i.id}" onclick="navigate('${i.id}')">${i.label}</a></li>`).join('');
-}
-
-let currentPage = 'dashboard';
-
-async function navigate(page) {
-    currentPage = page;
-    document.querySelectorAll('.nav-menu a').forEach(a => a.classList.toggle('active', a.dataset.page === page));
-    const items = NAV_ITEMS[currentUser.role] || [];
-    const item = items.find(i => i.id === page);
-    document.getElementById('pageTitle').textContent = item ? item.label : 'Dashboard';
-    document.getElementById('sidebar').classList.remove('open');
-    const content = document.getElementById('pageContent');
-    content.innerHTML = '<div class="loading">Loading...</div>';
-    try {
-        switch (page) {
-            case 'dashboard': await renderDashboard(content); break;
-            case 'prices': await renderPrices(content); break;
-            case 'listings': await renderListings(content); break;
-            case 'browse': await renderBrowse(content); break;
-            case 'compare': await renderCompare(content); break;
-            case 'transactions': await renderTransactions(content); break;
-            case 'jobs': await renderJobs(content); break;
-            case 'users': await renderUsers(content); break;
-            default: content.innerHTML = '<p>Page not found.</p>';
+        if(tabId === 'dashboard') {
+            const users = await DB.get('users');
+            const listings = await DB.get('listings');
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+                    <div class="card" style="padding: 20px;"><div class="text-muted">Total Users</div><div style="font-size: 28px; font-weight: 700; color: var(--primary);">${users.length}</div></div>
+                    <div class="card" style="padding: 20px;"><div class="text-muted">Active Listings</div><div style="font-size: 28px; font-weight: 700; color: var(--primary);">${listings.filter(l=>l.status==='available').length}</div></div>
+                    <div class="card" style="padding: 20px;"><div class="text-muted">Pending Users</div><div style="font-size: 28px; font-weight: 700; color: var(--warning);">${users.filter(u=>!u.verified).length}</div></div>
+                </div>`;
         }
-    } catch (err) {
-        content.innerHTML = `<div class="alert alert-error">Error: ${err.message}</div>`;
-    }
+        else if(tabId === 'users') {
+            const users = await DB.get('users');
+            container.innerHTML = `<div class="card"><table><thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody>${users.map(u => `<tr><td class="fw-bold">${u.name}</td><td>${u.role}</td><td>${u.verified ? '<span class="badge badge-success">Verified</span>' : '<span class="badge badge-warning">Pending</span>'}</td><td>${!u.verified ? `<button class="btn btn-primary btn-sm" onclick="verifyUser('${u.id}')">Approve</button>` : '-'}</td></tr>`).join('')}</tbody></table></div>`;
+        }
+        else if(tabId === 'browse') {
+            const listings = await DB.get('listings');
+            container.innerHTML = `<div class="card"><div class="card-header">Available Produce</div><table><thead><tr><th>Crop</th><th>Quantity</th><th>Price</th><th>Action</th></tr></thead><tbody>${listings.filter(l=>l.status==='available').map(l => `<tr><td class="fw-bold">${l.crop}</td><td>${l.quantity} ${l.unit}</td><td>ZMW ${Number(l.price_per_unit).toFixed(2)}</td><td><button class="btn btn-primary btn-sm" onclick="openPaymentModal('${l.id}')">Buy Now</button></td></tr>`).join('')}</tbody></table></div>`;
+        }
+        else if(tabId === 'transactions' || tabId === 'offers' || tabId === 'listings') {
+            const txns = await DB.get('transactions');
+            let filtered = txns;
+            if(currentUser.role === 'buyer') filtered = txns.filter(t => t.buyer_id === currentUser.id);
+            else if(currentUser.role === 'farmer') filtered = txns.filter(t => t.seller_id === currentUser.id);
+            
+            container.innerHTML = `<div class="card"><div class="card-header">Transactions</div><table><thead><tr><th>ID</th><th>Crop</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody>${filtered.map(t => `<tr><td>${t.id.substring(0,8)}</td><td>${t.crop}</td><td class="fw-bold">ZMW ${Number(t.total_amount).toFixed(2)}</td><td><span class="badge badge-info">${t.status}</span></td><td><button class="btn btn-outline btn-sm" onclick="openReceipt('${t.id}')">View Receipt</button></td></tr>`).join('')}</tbody></table></div>`;
+        }
+    } catch(e) { container.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`; }
 }
 
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+/* --- FEATURE: SIMULATED MOBILE MONEY & RECEIPT --- */
+let pendingListing = null;
 
-function statusBadge(status) {
-    const map = { pending: 'badge-pending', accepted: 'badge-info', in_transit: 'badge-warning', delivered: 'badge-success', completed: 'badge-success', cancelled: 'badge-rejected', available: 'badge-success', reserved: 'badge-warning' };
-    return `<span class="badge ${map[status] || 'badge-info'}">${status.replace('_',' ')}</span>`;
+async function openPaymentModal(listingId) {
+    const listings = await DB.get('listings');
+    pendingListing = listings.find(l => l.id === listingId);
+    if(!pendingListing) return;
+
+    const total = pendingListing.quantity * pendingListing.price_per_unit;
+
+    document.getElementById('modalTitle').textContent = 'Simulated Mobile Money Checkout';
+    document.getElementById('modalBody').innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 32px; margin-bottom: 8px;">📱</div>
+            <h3 style="margin-bottom: 4px;">Pay with Mobile Money</h3>
+            <p class="text-muted">Secure simulated transaction</p>
+        </div>
+        <div class="form-group">
+            <label>Phone Number (MTN/Airtel)</label>
+            <input type="text" id="payPhone" class="form-control" value="${currentUser.phone}" placeholder="e.g. 0961234567">
+        </div>
+        <div class="form-group">
+            <label>Amount (ZMW)</label>
+            <input type="text" class="form-control fw-bold" value="${total.toFixed(2)}" readonly style="background: #f1f5f9;">
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 10px;">
+            By clicking "Pay Now", you authorize a simulated transfer to Escrow.
+        </div>
+    `;
+    document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="processPayment()">Pay Now (Simulated)</button>
+    `;
+    document.getElementById('modal').classList.add('active');
 }
 
-function formatDate(iso) {
-    if (!iso) return '—';
-    return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+async function processPayment() {
+    const btn = document.querySelector('#modalFooter .btn-primary');
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+
+    // Simulate network delay for payment gateway
+    setTimeout(async () => {
+        const txnId = 'TXN-' + Math.floor(Math.random() * 1000000);
+        const txnData = {
+            id: txnId,
+            listing_id: pendingListing.id,
+            crop: pendingListing.crop,
+            quantity: pendingListing.quantity,
+            unit: pendingListing.unit,
+            price_per_unit: pendingListing.price_per_unit,
+            total_amount: pendingListing.quantity * pendingListing.price_per_unit,
+            buyer_id: currentUser.id,
+            seller_id: pendingListing.farmer_id,
+            status: 'paid_escrow',
+            need_transport: false,
+            created_at: new Date().toISOString()
+        };
+
+        try {
+            await DB.insert('transactions', txnData);
+            await DB.update('listings', pendingListing.id, { status: 'sold' });
+            
+            closeModal();
+            switchTab('transactions', document.querySelector('[onclick*="transactions"]'));
+            
+            // Automatically open the receipt immediately after payment
+            setTimeout(() => openReceipt(txnId), 500);
+        } catch(e) {
+            alert('Payment failed: ' + e.message);
+            btn.textContent = 'Pay Now (Simulated)';
+            btn.disabled = false;
+        }
+    }, 1500); // 1.5 second fake processing delay
 }
 
-/* ============================================================
-   PAGES
-   ============================================================ */
+async function openReceipt(txnId) {
+    const txns = await DB.get('transactions');
+    const t = txns.find(x => x.id === txnId);
+    if(!t) return;
 
-async function renderDashboard(el) {
-    const [listings, transactions, users] = await Promise.all([DB.getListings(), DB.getTransactions(), DB.getUsers()]);
-    let stats = [];
-    if (currentUser.role === 'farmer' || currentUser.role === 'cooperative') {
-        const myListings = listings.filter(l => l.farmerId === currentUser.id);
-        const myTxns = transactions.filter(t => t.sellerId === currentUser.id);
-        stats = [
-            { color: 'green', value: myListings.filter(l => l.status === 'available').length, label: 'Active Listings' },
-            { color: 'blue', value: myTxns.length, label: 'Transactions' },
-            { color: 'orange', value: myTxns.filter(t => t.status === 'completed').reduce((s,t) => s + (t.totalAmount||0), 0).toFixed(2), label: 'Total Earned (ZMW)' },
-            { color: 'red', value: myTxns.filter(t => t.status !== 'completed' && t.status !== 'cancelled').length, label: 'In Progress' }
-        ];
-    } else if (currentUser.role === 'buyer') {
-        const myTxns = transactions.filter(t => t.buyerId === currentUser.id);
-        stats = [
-            { color: 'green', value: listings.filter(l => l.status === 'available').length, label: 'Available Listings' },
-            { color: 'blue', value: myTxns.length, label: 'My Purchases' },
-            { color: 'orange', value: myTxns.filter(t => t.status === 'completed').reduce((s,t) => s + (t.totalAmount||0), 0).toFixed(2), label: 'Total Spent (ZMW)' },
-            { color: 'red', value: myTxns.filter(t => t.status !== 'completed' && t.status !== 'cancelled').length, label: 'In Progress' }
-        ];
-    } else if (currentUser.role === 'transporter') {
-        const myJobs = transactions.filter(t => t.transporterId === currentUser.id);
-        stats = [
-            { color: 'green', value: myJobs.filter(t => t.status === 'in_transit').length, label: 'Active Jobs' },
-            { color: 'blue', value: myJobs.filter(t => t.status === 'delivered' || t.status === 'completed').length, label: 'Completed Deliveries' },
-            { color: 'orange', value: transactions.filter(t => t.needTransport && !t.transporterId && t.status === 'accepted').length, label: 'Available Jobs' },
-            { color: 'red', value: myJobs.reduce((s,t) => s + (t.transportFee||0), 0).toFixed(2), label: 'Transport Fees (ZMW)' }
-        ];
-    } else if (currentUser.role === 'admin') {
-        stats = [
-            { color: 'green', value: users.length, label: 'Total Users' },
-            { color: 'orange', value: users.filter(u => !u.verified).length, label: 'Pending Verifications' },
-            { color: 'blue', value: listings.filter(l => l.status === 'available').length, label: 'Active Listings' },
-            { color: 'red', value: transactions.length, label: 'Total Transactions' }
-        ];
-    }
+    const dateStr = new Date(t.created_at).toLocaleString();
 
-    let pendingHtml = '';
-    if (currentUser.role === 'admin') {
-        const pending = users.filter(u => !u.verified);
-        pendingHtml = `<div class="card"><h3>Pending User Verifications</h3>
-            ${pending.length === 0 ? '<p class="text-muted">No pending verifications.</p>' : `
-            <div class="table-container"><table>
-                <thead><tr><th>Name</th><th>Role</th><th>Location</th><th>Action</th></tr></thead>
-                <tbody>${pending.map(u => `<tr>
-                    <td>${u.name}</td><td><span class="badge badge-info">${u.role}</span></td><td>${u.location}</td>
-                    <td><button class="btn btn-sm btn-primary" onclick="verifyUser('${u.id}')">Approve</button></td>
-                </tr>`).join('')}</tbody>
-            </table></div>`}</div>`;
-    }
-
-    const myTxns = transactions.filter(t =>
-        currentUser.role === 'admin' ? true :
-        currentUser.role === 'transporter' ? t.transporterId === currentUser.id :
-        t.sellerId === currentUser.id || t.buyerId === currentUser.id
-    ).slice(-5).reverse();
-
-    el.innerHTML = `
-        <div class="stats-grid">${stats.map(s => `<div class="stat-card ${s.color}"><div class="stat-info"><div class="value">${s.value}</div><div class="label">${s.label}</div></div></div>`).join('')}</div>
-        ${pendingHtml}
-        <div class="card"><h3>Recent Transactions</h3>
-            ${myTxns.length === 0 ? '<div class="empty-state"><p>No transactions yet.</p></div>' : `
-            <div class="table-container"><table>
-                <thead><tr><th>ID</th><th>Crop</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
-                <tbody>${myTxns.map(t => `<tr>
-                    <td>${t.id.substring(0,8)}</td><td>${t.crop} (${t.quantity}${t.unit})</td>
-                    <td>ZMW ${(t.totalAmount||0).toFixed(2)}</td><td>${statusBadge(t.status)}</td><td>${formatDate(t.createdAt)}</td>
-                </tr>`).join('')}</tbody>
-            </table></div>`}
-        </div>`;
-}
-
-async function renderPrices(el) {
-    const prices = await DB.getPrices();
-    const crops = [...new Set(prices.map(p => p.crop))];
-    el.innerHTML = `
-        <div class="card"><h3>Current Market Prices</h3>
-            <p class="text-muted mb-16">Updated by administrators. All prices in ZMW per kg.</p>
-            <div class="search-bar">
-                <input type="text" id="priceSearch" placeholder="Search crop..." oninput="filterPrices()">
-                <select id="priceCropFilter" onchange="filterPrices()"><option value="">All Crops</option>${crops.map(c => `<option value="${c}">${c}</option>`).join('')}</select>
+    document.getElementById('modalTitle').textContent = 'Official Digital Receipt';
+    document.getElementById('modalBody').innerHTML = `
+        <div class="receipt-box">
+            <div class="receipt-header">
+                <h3 style="margin-bottom: 4px;">AGRI-LINK ZAMBIA</h3>
+                <div>Digital Escrow Receipt</div>
             </div>
-            <div id="priceTableContainer"></div>
-        </div>`;
-    renderPriceTable(prices);
-    if (currentUser.role === 'admin') {
-        el.innerHTML += `<div class="card"><h3>Add Market Price</h3>
-            <div class="form-row">
-                <div class="form-group"><label>Crop</label><input type="text" id="newPriceCrop"></div>
-                <div class="form-group"><label>Market</label><input type="text" id="newPriceMarket"></div>
-                <div class="form-group"><label>Price (ZMW/kg)</label><input type="number" id="newPriceValue" step="0.01"></div>
+            <div class="receipt-row"><span>Txn ID:</span> <span>${t.id}</span></div>
+            <div class="receipt-row"><span>Date:</span> <span>${dateStr}</span></div>
+            <div class="receipt-row"><span>Buyer:</span> <span>${currentUser.name}</span></div>
+            <hr style="border: none; border-top: 1px dashed var(--border); margin: 10px 0;">
+            <div class="receipt-row"><span>Item:</span> <span>${t.crop}</span></div>
+            <div class="receipt-row"><span>Quantity:</span> <span>${t.quantity} ${t.unit}</span></div>
+            <div class="receipt-row"><span>Unit Price:</span> <span>ZMW ${Number(t.price_per_unit).toFixed(2)}</span></div>
+            <div class="receipt-total"><span>TOTAL PAID:</span> <span>ZMW ${Number(t.total_amount).toFixed(2)}</span></div>
+            <div class="receipt-stamp">PAID VIA MOMO</div>
+            <div style="text-align: center; margin-top: 15px; font-size: 10px; color: #888;">
+                This is a simulated transaction generated for the AgriLink prototype.<br>
+                Funds held securely in Escrow until delivery is confirmed.
             </div>
-            <button class="btn btn-primary" onclick="addPrice()">Save Price</button></div>`;
-    }
-}
-
-function renderPriceTable(prices) {
-    const c = document.getElementById('priceTableContainer');
-    if (!c) return;
-    const grouped = {};
-    prices.forEach(p => { if (!grouped[p.crop]) grouped[p.crop] = []; grouped[p.crop].push(p); });
-    if (Object.keys(grouped).length === 0) { c.innerHTML = '<div class="empty-state"><p>No prices yet.</p></div>'; return; }
-    c.innerHTML = Object.entries(grouped).map(([crop, items]) => `
-        <div class="mb-16"><h4 style="margin-bottom:8px;color:var(--primary-dark);">${crop}</h4>
-        <div class="table-container"><table>
-            <thead><tr><th>Market</th><th>Price (ZMW/kg)</th><th>Updated</th>${currentUser.role === 'admin' ? '<th>Action</th>' : ''}</tr></thead>
-            <tbody>${items.map(p => `<tr>
-                <td>${p.market}</td><td class="fw-bold">${Number(p.price).toFixed(2)}</td><td class="text-muted">${formatDate(p.updated)}</td>
-                ${currentUser.role === 'admin' ? `<td><button class="btn btn-sm btn-danger" onclick="deletePrice('${p.id}')">Delete</button></td>` : ''}
-            </tr>`).join('')}</tbody>
-        </table></div></div>`).join('');
-}
-
-async function filterPrices() {
-    const s = (document.getElementById('priceSearch')?.value || '').toLowerCase();
-    const cf = document.getElementById('priceCropFilter')?.value || '';
-    let prices = await DB.getPrices();
-    if (cf) prices = prices.filter(p => p.crop === cf);
-    if (s) prices = prices.filter(p => p.crop.toLowerCase().includes(s) || p.market.toLowerCase().includes(s));
-    renderPriceTable(prices);
-}
-
-async function addPrice() {
-    const crop = document.getElementById('newPriceCrop').value.trim();
-    const market = document.getElementById('newPriceMarket').value.trim();
-    const price = parseFloat(document.getElementById('newPriceValue').value);
-    if (!crop || !market || isNaN(price) || price <= 0) { alert('Fill all fields.'); return; }
-    await DB.addPrice({ crop, market, price, unit: 'kg', updated: new Date().toISOString() });
-    navigate('prices');
-}
-
-async function deletePrice(id) { if (!confirm('Delete?')) return; await DB.deletePrice(id); navigate('prices'); }
-
-async function renderListings(el) {
-    const all = await DB.getListings();
-    const isAdmin = currentUser.role === 'admin';
-    const myList = isAdmin ? all : all.filter(l => l.farmerId === currentUser.id);
-    el.innerHTML = `<div class="card">
-        <div class="flex justify-between items-center mb-16 flex-wrap gap-8">
-            <h3>${isAdmin ? 'All Listings' : 'My Listings'}</h3>
-            ${!isAdmin ? '<button class="btn btn-primary" onclick="openAddListingModal()">+ Add Listing</button>' : ''}
         </div>
-        ${myList.length === 0 ? '<div class="empty-state"><p>No listings yet.</p></div>' : `
-        <div class="table-container"><table>
-            <thead><tr><th>Crop</th><th>Quantity</th><th>Price/Unit</th><th>Location</th>${isAdmin ? '<th>Farmer</th>' : ''}<th>Status</th><th>Actions</th></tr></thead>
-            <tbody>${myList.map(l => `<tr>
-                <td class="fw-bold">${l.crop}</td><td>${l.quantity} ${l.unit}</td><td>ZMW ${Number(l.pricePerUnit).toFixed(2)}</td><td>${l.location}</td>
-                ${isAdmin ? `<td>${l.farmerName}</td>` : ''}
-                <td>${statusBadge(l.status)}</td>
-                <td><button class="btn btn-sm btn-outline" onclick="viewListing('${l.id}')">View</button>
-                ${!isAdmin && l.status === 'available' ? `<button class="btn btn-sm btn-danger" onclick="deleteListing('${l.id}')">Delete</button>` : ''}</td>
-            </tr>`).join('')}</tbody>
-        </table></div>`}
-    </div>`;
+    `;
+    document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-outline" onclick="closeModal()">Close</button>
+        <button class="btn btn-primary" onclick="window.print()">Print Receipt</button>
+    `;
+    document.getElementById('modal').classList.add('active');
 }
 
-function openAddListingModal() {
-    openModal('Add Listing', `
-        <div class="form-group"><label>Crop</label><input type="text" id="listCrop"></div>
-        <div class="form-row">
-            <div class="form-group"><label>Quantity</label><input type="number" id="listQuantity"></div>
-            <div class="form-group"><label>Unit</label><select id="listUnit"><option value="kg">kg</option><option value="tonnes">tonnes</option><option value="bags">bags (50kg)</option></select></div>
-        </div>
-        <div class="form-group"><label>Price per Unit (ZMW)</label><input type="number" id="listPrice" step="0.01"></div>
-        <div class="form-group"><label>Location</label><input type="text" id="listLocation" value="${currentUser.location}"></div>
-        <div class="form-group"><label>Description</label><textarea id="listDescription" rows="2"></textarea></div>
-    `, `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveListing()">Save</button>`);
-}
-
-async function saveListing() {
-    const crop = document.getElementById('listCrop').value.trim();
-    const quantity = parseFloat(document.getElementById('listQuantity').value);
-    const unit = document.getElementById('listUnit').value;
-    const pricePerUnit = parseFloat(document.getElementById('listPrice').value);
-    const location = document.getElementById('listLocation').value.trim();
-    const description = document.getElementById('listDescription').value.trim();
-    if (!crop || isNaN(quantity) || isNaN(pricePerUnit) || !location) { alert('Fill all fields.'); return; }
-    await DB.addListing({ farmerId: currentUser.id, farmerName: currentUser.name, crop, quantity, unit, pricePerUnit, location, description, status: 'available', createdAt: new Date().toISOString() });
-    closeModal(); navigate('listings');
-}
-
-async function deleteListing(id) { if (!confirm('Delete?')) return; await DB.deleteListing(id); navigate('listings'); }
-
-async function viewListing(id) {
-    const l = (await DB.getListings()).find(x => x.id === id);
-    if (!l) return;
-    openModal('Listing', `<table style="width:100%;font-size:14px;">
-        <tr><td class="fw-bold">Crop</td><td>${l.crop}</td></tr>
-        <tr><td class="fw-bold">Quantity</td><td>${l.quantity} ${l.unit}</td></tr>
-        <tr><td class="fw-bold">Price</td><td>ZMW ${Number(l.pricePerUnit).toFixed(2)}</td></tr>
-        <tr><td class="fw-bold">Total</td><td class="fw-bold">ZMW ${(l.quantity * l.pricePerUnit).toFixed(2)}</td></tr>
-        <tr><td class="fw-bold">Location</td><td>${l.location}</td></tr>
-        <tr><td class="fw-bold">Farmer</td><td>${l.farmerName}</td></tr>
-        <tr><td class="fw-bold">Description</td><td>${l.description || '—'}</td></tr>
-    </table>`, `<button class="btn btn-outline" onclick="closeModal()">Close</button>
-        ${currentUser.role === 'buyer' && l.status === 'available' ? `<button class="btn btn-primary" onclick="openMakeOfferModal('${l.id}')">Make Offer</button>` : ''}`);
-}
-
-async function renderBrowse(el) {
-    if (currentUser.role === 'buyer') await renderBrowseProduce(el);
-    else await renderBrowseOffers(el);
-}
-
-async function renderBrowseProduce(el) {
-    const listings = (await DB.getListings()).filter(l => l.status === 'available');
-    el.innerHTML = `<div class="card"><h3>Browse Produce</h3><div id="produceGrid"></div></div>`;
-    renderProduceGrid(listings);
-}
-
-function renderProduceGrid(listings) {
-    const c = document.getElementById('produceGrid');
-    if (!c) return;
-    if (listings.length === 0) { c.innerHTML = '<div class="empty-state"><p>No listings.</p></div>'; return; }
-    c.innerHTML = `<div class="compare-grid">${listings.map(l => `
-        <div class="compare-card"><h4>${l.crop}</h4>
-            <div class="price">ZMW ${Number(l.pricePerUnit).toFixed(2)} <span style="font-size:12px;color:var(--text-light);">/${l.unit}</span></div>
-            <div class="meta">${l.quantity} ${l.unit} available</div>
-            <div class="meta">${l.location} | ${l.farmerName}</div>
-            <div class="mt-16 flex gap-8">
-                <button class="btn btn-sm btn-outline" onclick="viewListing('${l.id}')">Details</button>
-                <button class="btn btn-sm btn-primary" onclick="openMakeOfferModal('${l.id}')">Make Offer</button>
-            </div>
-        </div>`).join('')}</div>`;
-}
-
-async function renderBrowseOffers(el) {
-    const myIds = (await DB.getListings()).filter(l => l.farmerId === currentUser.id).map(l => l.id);
-    const offers = (await DB.getTransactions()).filter(t => myIds.includes(t.listingId) && t.status === 'pending');
-    const buyers = {};
-    for (const t of offers) buyers[t.buyerId] = await DB.getUserById(t.buyerId);
-    el.innerHTML = `<div class="card"><h3>Offers Received</h3>
-        ${offers.length === 0 ? '<div class="empty-state"><p>No pending offers.</p></div>' : `
-        <div class="table-container"><table>
-            <thead><tr><th>Buyer</th><th>Crop</th><th>Qty</th><th>Price</th><th>Total</th><th>Actions</th></tr></thead>
-            <tbody>${offers.map(t => `<tr>
-                <td>${buyers[t.buyerId]?.name || '?'}</td><td>${t.crop}</td><td>${t.quantity} ${t.unit}</td>
-                <td>ZMW ${Number(t.pricePerUnit).toFixed(2)}</td><td class="fw-bold">ZMW ${Number(t.totalAmount).toFixed(2)}</td>
-                <td><button class="btn btn-sm btn-primary" onclick="respondOffer('${t.id}','accepted')">Accept</button>
-                <button class="btn btn-sm btn-danger" onclick="respondOffer('${t.id}','cancelled')">Decline</button></td>
-            </tr>`).join('')}</tbody>
-        </table></div>`}
-    </div>`;
-}
-
-async function renderCompare(el) {
-    const prices = await DB.getPrices();
-    const listings = (await DB.getListings()).filter(l => l.status === 'available');
-    const crops = [...new Set([...prices.map(p => p.crop), ...listings.map(l => l.crop)])];
-    el.innerHTML = `<div class="card"><h3>Price Comparison</h3>
-        <div class="form-group"><label>Select Crop</label>
-            <select id="compareCrop" onchange="renderComparison()"><option value="">-- Choose --</option>${crops.map(c => `<option value="${c}">${c}</option>`).join('')}</select>
-        </div>
-        <div id="comparisonResults"></div>
-    </div>`;
-}
-
-async function renderComparison() {
-    const crop = document.getElementById('compareCrop').value;
-    const c = document.getElementById('comparisonResults');
-    if (!crop) { c.innerHTML = ''; return; }
-    const prices = (await DB.getPrices()).filter(p => p.crop === crop);
-    const listings = (await DB.getListings()).filter(l => l.crop === crop && l.status === 'available');
-    const all = [
-        ...prices.map(p => ({ type: 'Market', source: p.market, price: Number(p.price), unit: p.unit })),
-        ...listings.map(l => ({ type: 'Farmer', source: `${l.farmerName} (${l.location})`, price: Number(l.pricePerUnit), unit: l.unit, id: l.id }))
-    ].sort((a, b) => a.price - b.price);
-    if (all.length === 0) { c.innerHTML = '<p class="text-muted">No data.</p>'; return; }
-    const best = all[0].price;
-    c.innerHTML = `<div class="compare-grid">${all.map(o => `
-        <div class="compare-card ${o.price === best ? 'best' : ''}">
-            <div style="font-size:11px;text-transform:uppercase;color:var(--text-light);">${o.type}</div>
-            <h4>${o.source}</h4>
-            <div class="price">ZMW ${o.price.toFixed(2)}/${o.unit}</div>
-            ${o.price === best ? '<div class="best-label">Best Price</div>' : ''}
-            ${o.id ? `<button class="btn btn-sm btn-primary mt-16" onclick="openMakeOfferModal('${o.id}')">Make Offer</button>` : ''}
-        </div>`).join('')}</div>`;
-}
-
-async function renderTransactions(el) {
-    let txns = (await DB.getTransactions()).filter(t => {
-        if (currentUser.role === 'admin') return true;
-        if (currentUser.role === 'transporter') return t.transporterId === currentUser.id || (t.needTransport && !t.transporterId);
-        return t.sellerId === currentUser.id || t.buyerId === currentUser.id;
-    }).reverse();
-    const users = {};
-    for (const t of txns) {
-        if (!users[t.buyerId]) users[t.buyerId] = await DB.getUserById(t.buyerId);
-        if (!users[t.sellerId]) users[t.sellerId] = await DB.getUserById(t.sellerId);
-    }
-    el.innerHTML = `<div class="card"><h3>Transactions</h3>
-        ${txns.length === 0 ? '<div class="empty-state"><p>No transactions.</p></div>' : `
-        <div class="table-container"><table>
-            <thead><tr><th>ID</th><th>Crop</th><th>Qty</th><th>Total</th><th>Buyer</th><th>Seller</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody>${txns.map(t => `<tr>
-                <td>${t.id.substring(0,8)}</td><td>${t.crop}</td><td>${t.quantity} ${t.unit}</td>
-                <td class="fw-bold">${Number(t.totalAmount).toFixed(2)}</td>
-                <td>${users[t.buyerId]?.name || '—'}</td><td>${users[t.sellerId]?.name || '—'}</td>
-                <td>${statusBadge(t.status)}</td>
-                <td><button class="btn btn-sm btn-outline" onclick="viewTransaction('${t.id}')">View</button></td>
-            </tr>`).join('')}</tbody>
-        </table></div>`}
-    </div>`;
-}
-
-async function viewTransaction(id) {
-    const t = (await DB.getTransactions()).find(x => x.id === id);
-    if (!t) return;
-    const buyer = await DB.getUserById(t.buyerId);
-    const seller = await DB.getUserById(t.sellerId);
-    const transporter = t.transporterId ? await DB.getUserById(t.transporterId) : null;
-    const steps = [
-        { key: 'pending', label: 'Offer Made', done: true },
-        { key: 'accepted', label: 'Accepted', done: ['accepted','in_transit','delivered','completed'].includes(t.status) },
-        { key: 'in_transit', label: 'In Transit', done: ['in_transit','delivered','completed'].includes(t.status) },
-        { key: 'delivered', label: 'Delivered', done: ['delivered','completed'].includes(t.status) },
-        { key: 'completed', label: 'Completed', done: t.status === 'completed' }
-    ];
-    openModal(`Txn ${t.id.substring(0,8)}`, `
-        <table style="width:100%;font-size:14px;margin-bottom:16px;">
-            <tr><td class="fw-bold">Crop</td><td>${t.crop}</td></tr>
-            <tr><td class="fw-bold">Qty</td><td>${t.quantity} ${t.unit}</td></tr>
-            <tr><td class="fw-bold">Total</td><td class="fw-bold">ZMW ${Number(t.totalAmount).toFixed(2)}</td></tr>
-            <tr><td class="fw-bold">Buyer</td><td>${buyer?.name || '—'}</td></tr>
-            <tr><td class="fw-bold">Seller</td><td>${seller?.name || '—'}</td></tr>
-            ${transporter ? `<tr><td class="fw-bold">Transporter</td><td>${transporter.name}</td></tr>` : ''}
-            <tr><td class="fw-bold">Status</td><td>${statusBadge(t.status)}</td></tr>
-        </table>
-        <h4 style="margin-bottom:12px;">Timeline</h4>
-        <div class="timeline">${steps.map(s => `<div class="timeline-item ${s.done ? 'completed' : ''} ${s.key === t.status ? 'current' : ''}"><div class="desc">${s.label}</div></div>`).join('')}</div>
-    `, `<button class="btn btn-outline" onclick="closeModal()">Close</button>
-        ${currentUser.role === 'farmer' && t.status === 'pending' && t.sellerId === currentUser.id ? `<button class="btn btn-primary" onclick="respondOffer('${t.id}','accepted')">Accept</button><button class="btn btn-danger" onclick="respondOffer('${t.id}','cancelled')">Decline</button>` : ''}
-        ${currentUser.role === 'farmer' && t.status === 'accepted' && t.sellerId === currentUser.id ? `<button class="btn btn-secondary" onclick="updateTxnStatus('${t.id}','in_transit')">Mark In Transit</button>` : ''}
-        ${currentUser.role === 'transporter' && t.transporterId === currentUser.id && t.status === 'in_transit' ? `<button class="btn btn-secondary" onclick="updateTxnStatus('${t.id}','delivered')">Mark Delivered</button>` : ''}
-        ${currentUser.role === 'buyer' && t.status === 'delivered' && t.buyerId === currentUser.id ? `<button class="btn btn-primary" onclick="updateTxnStatus('${t.id}','completed')">Confirm &amp; Complete</button>` : ''}`);
-}
-
-async function respondOffer(txnId, newStatus) {
-    await DB.updateTransaction(txnId, { status: newStatus });
-    if (newStatus === 'cancelled') {
-        const t = (await DB.getTransactions()).find(x => x.id === txnId);
-        if (t && t.listingId) await DB.updateListing(t.listingId, { status: 'available' });
-    }
-    closeModal(); navigate(currentPage);
-}
-
-async function updateTxnStatus(txnId, newStatus) {
-    await DB.updateTransaction(txnId, { status: newStatus });
-    closeModal(); navigate(currentPage);
-}
-
-async function openMakeOfferModal(listingId) {
-    const l = (await DB.getListings()).find(x => x.id === listingId);
-    if (!l) return;
-    openModal('Make Offer', `
-        <div class="alert alert-info">Offering for <strong>${l.crop}</strong> from <strong>${l.farmerName}</strong>. Listed: <strong>ZMW ${Number(l.pricePerUnit).toFixed(2)}/${l.unit}</strong></div>
-        <div class="form-row">
-            <div class="form-group"><label>Quantity (${l.unit})</label><input type="number" id="offerQuantity" value="${l.quantity}" max="${l.quantity}"></div>
-            <div class="form-group"><label>Your Price/${l.unit}</label><input type="number" id="offerPrice" step="0.01" value="${Number(l.pricePerUnit).toFixed(2)}"></div>
-        </div>
-        <div class="form-group"><label><input type="checkbox" id="offerTransport" style="width:auto;margin-right:6px;"> I need transport arranged</label></div>
-        <div class="form-group"><label>Note</label><textarea id="offerNote" rows="2"></textarea></div>
-        <div id="offerTotal" class="alert alert-success">Total: ZMW ${(l.quantity * l.pricePerUnit).toFixed(2)}</div>
-    `, `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="submitOffer('${l.id}')">Submit</button>`);
-    const updateTotal = () => {
-        const q = parseFloat(document.getElementById('offerQuantity').value) || 0;
-        const p = parseFloat(document.getElementById('offerPrice').value) || 0;
-        document.getElementById('offerTotal').textContent = `Total: ZMW ${(q*p).toFixed(2)}`;
-    };
-    document.getElementById('offerQuantity').addEventListener('input', updateTotal);
-    document.getElementById('offerPrice').addEventListener('input', updateTotal);
-}
-
-async function submitOffer(listingId) {
-    const l = (await DB.getListings()).find(x => x.id === listingId);
-    const quantity = parseFloat(document.getElementById('offerQuantity').value);
-    const pricePerUnit = parseFloat(document.getElementById('offerPrice').value);
-    const needTransport = document.getElementById('offerTransport').checked;
-    const note = document.getElementById('offerNote').value.trim();
-    if (isNaN(quantity) || isNaN(pricePerUnit) || quantity <= 0 || pricePerUnit <= 0) { alert('Invalid values.'); return; }
-    if (quantity > l.quantity) { alert('Exceeds available.'); return; }
-    await DB.addTransaction({ listingId, crop: l.crop, quantity, unit: l.unit, pricePerUnit, totalAmount: quantity*pricePerUnit, buyerId: currentUser.id, sellerId: l.farmerId, needTransport, status: 'pending', note, createdAt: new Date().toISOString() });
-    await DB.updateListing(listingId, { status: 'reserved' });
-    closeModal(); alert('Offer submitted.'); navigate('transactions');
-}
-
-async function renderJobs(el) {
-    const txns = await DB.getTransactions();
-    const available = txns.filter(t => t.needTransport && !t.transporterId && t.status === 'accepted');
-    const myJobs = txns.filter(t => t.transporterId === currentUser.id);
-    const users = {};
-    for (const t of txns) {
-        if (!users[t.sellerId]) users[t.sellerId] = await DB.getUserById(t.sellerId);
-        if (!users[t.buyerId]) users[t.buyerId] = await DB.getUserById(t.buyerId);
-    }
-    el.innerHTML = `<div class="card"><h3>Available Jobs</h3>
-        ${available.length === 0 ? '<div class="empty-state"><p>No jobs.</p></div>' : `
-        <div class="table-container"><table>
-            <thead><tr><th>Crop</th><th>Qty</th><th>From</th><th>To</th><th>Action</th></tr></thead>
-            <tbody>${available.map(t => `<tr>
-                <td>${t.crop}</td><td>${t.quantity} ${t.unit}</td>
-                <td>${users[t.sellerId]?.location || '—'}</td><td>${users[t.buyerId]?.location || '—'}</td>
-                <td><button class="btn btn-sm btn-primary" onclick="acceptTransportJob('${t.id}')">Accept</button></td>
-            </tr>`).join('')}</tbody>
-        </table></div>`}
-    </div>
-    <div class="card"><h3>My Jobs</h3>
-        ${myJobs.length === 0 ? '<p class="text-muted">No assigned jobs.</p>' : `
-        <div class="table-container"><table>
-            <thead><tr><th>ID</th><th>Crop</th><th>Qty</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody>${myJobs.map(t => `<tr>
-                <td>${t.id.substring(0,8)}</td><td>${t.crop}</td><td>${t.quantity} ${t.unit}</td><td>${statusBadge(t.status)}</td>
-                <td>${t.status === 'accepted' ? `<button class="btn btn-sm btn-secondary" onclick="updateTxnStatus('${t.id}','in_transit')">Start</button>` : ''}
-                    ${t.status === 'in_transit' ? `<button class="btn btn-sm btn-primary" onclick="updateTxnStatus('${t.id}','delivered')">Delivered</button>` : ''}</td>
-            </tr>`).join('')}</tbody>
-        </table></div>`}
-    </div>`;
-}
-
-async function acceptTransportJob(txnId) {
-    const fee = prompt('Transport fee (ZMW):', '150');
-    if (fee === null) return;
-    const feeNum = parseFloat(fee);
-    if (isNaN(feeNum) || feeNum <= 0) { alert('Invalid.'); return; }
-    await DB.updateTransaction(txnId, { transporterId: currentUser.id, transportFee: feeNum, transportStatus: 'assigned' });
-    alert('Job accepted.'); navigate('jobs');
-}
-
-async function renderUsers(el) {
-    const users = await DB.getUsers();
-    const pending = users.filter(u => !u.verified);
-    const verified = users.filter(u => u.verified && u.role !== 'admin');
-    el.innerHTML = `<div class="card"><h3>Pending (${pending.length})</h3>
-        ${pending.length === 0 ? '<div class="empty-state"><p>All verified.</p></div>' : `
-        <div class="table-container"><table>
-            <thead><tr><th>Name</th><th>Role</th><th>Phone</th><th>Location</th><th>Actions</th></tr></thead>
-            <tbody>${pending.map(u => `<tr>
-                <td class="fw-bold">${u.name}</td><td><span class="badge badge-info">${u.role}</span></td>
-                <td>${u.phone}</td><td>${u.location}</td>
-                <td><button class="btn btn-sm btn-primary" onclick="verifyUser('${u.id}')">Approve</button>
-                    <button class="btn btn-sm btn-danger" onclick="rejectUser('${u.id}')">Reject</button></td>
-            </tr>`).join('')}</tbody>
-        </table></div>`}
-    </div>
-    <div class="card"><h3>Verified (${verified.length})</h3>
-        <div class="table-container"><table>
-            <thead><tr><th>Name</th><th>Role</th><th>Phone</th><th>Location</th></tr></thead>
-            <tbody>${verified.map(u => `<tr><td>${u.name}</td><td><span class="badge badge-info">${u.role}</span></td><td>${u.phone}</td><td>${u.location}</td></tr>`).join('')}</tbody>
-        </table></div>
-    </div>`;
-}
-
-async function verifyUser(id) { await DB.updateUser(id, { verified: true }); navigate('users'); }
-async function rejectUser(id) { if (!confirm('Reject?')) return; await DB.deleteUser(id); navigate('users'); }
-
-function openModal(title, body, footer) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalBody').innerHTML = body;
-    document.getElementById('modalFooter').innerHTML = footer || '';
-    document.getElementById('modalOverlay').classList.add('active');
-}
-
-function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
-document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target.id === 'modalOverlay') closeModal(); });
-
-console.log('AgriLink Zambia loaded (Supabase backend)');
-console.log('Project:', 'fsepjaslhgvwnxouaney.supabase.co');
-console.log('Demo accounts:');
-console.log('  Admin:       0966000000 / admin123');
-console.log('  Farmer:      0977123456 / farmer123');
-console.log('  Buyer:       0977000111 / buyer123');
-console.log('  Transporter: 0977222333 / trans123');
+/* --- HELPERS --- */
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
+async function verifyUser(id) { await DB.update('users', id, { verified: true }); loadTabData('users'); }
 </script>
 </body>
 </html>
