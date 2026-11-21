@@ -162,6 +162,8 @@ td.mono,.mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
   .auth-panel{padding:24px 16px}
   .main-content{padding:20px 16px 40px}.page-title{font-size:23px}
   #navUserName{display:none}.user-badge{padding:5px}
+  .sidebar{width:var(--rail-open)}
+  .sidebar-brand .text,.nav-item .label{opacity:1}
 }
 @media print{
   body>*:not(#modal){display:none!important}
@@ -243,7 +245,7 @@ td.mono,.mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 </div>
 
 <script>
-/* --- ICONS (presentation only) --- */
+/* --- ICONS --- */
 const ICONS = {
   leaf:'<path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15"/><path d="M5 19c2-5 5-8 9-10"/>',
   shield:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
@@ -293,7 +295,7 @@ const DB = {
     }
 };
 
-/* --- VIEW HELPERS (presentation only) --- */
+/* --- VIEW HELPERS --- */
 const initials = n => (n || '?').split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
 const cap = s => (s || '').charAt(0).toUpperCase() + (s || '').slice(1);
 const statusLabel = s => cap(String(s || '').replace(/_/g, ' '));
@@ -423,19 +425,99 @@ async function loadTabData(tabId) {
             const users = await DB.get('users');
             container.innerHTML = `<div class="card"><div class="table-wrap"><table><thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody>${users.map(u => `<tr><td><div class="cell-user"><span class="avatar">${initials(u.name)}</span><span class="fw-bold">${u.name}</span></div></td><td>${cap(u.role)}</td><td>${u.verified ? '<span class="badge badge-success">Verified</span>' : '<span class="badge badge-warning">Pending</span>'}</td><td>${!u.verified ? `<button class="btn btn-primary btn-sm" onclick="verifyUser('${u.id}')">Approve</button>` : '-'}</td></tr>`).join('')}</tbody></table></div></div>`;
         }
+        else if(tabId === 'prices') {
+            const prices = await DB.get('prices');
+            container.innerHTML = `<div class="card"><div class="card-header">Market Prices <button class="btn btn-primary btn-sm" onclick="openAddPriceModal()">+ Add Price</button></div><div class="table-wrap"><table><thead><tr><th>Crop</th><th>Market</th><th>Price</th></tr></thead><tbody>${prices.map(p => `<tr><td class="fw-bold"><span class="crop-dot"></span>${p.crop}</td><td>${p.market}</td><td class="fw-bold mono">ZMW ${Number(p.price).toFixed(2)}</td></tr>`).join('')}</tbody></table></div></div>`;
+        }
         else if(tabId === 'browse') {
             const listings = (await DB.get('listings')).filter(l=>l.status==='available');
             container.innerHTML = `<div class="card"><div class="card-header">Available produce <small>${listings.length} listed</small></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Crop</th><th>Quantity</th><th>Price</th><th>Action</th></tr></thead><tbody>${listings.map(l => `<tr><td class="fw-bold"><span class="crop-dot"></span>${l.crop}</td><td class="mono">${l.quantity} ${l.unit}</td><td class="mono">ZMW ${Number(l.price_per_unit).toFixed(2)}</td><td><button class="btn btn-primary btn-sm" onclick="openPaymentModal('${l.id}')">Buy now</button></td></tr>`).join('')}</tbody></table></div>` : emptyState('No produce listed right now', 'New listings from farmers will appear here.')}</div>`;
         }
-        else if(tabId === 'transactions' || tabId === 'offers' || tabId === 'listings') {
+        else if(tabId === 'listings') {
+            const listings = (await DB.get('listings')).filter(l=>l.farmer_id === currentUser.id);
+            container.innerHTML = `<div class="card"><div class="card-header">My Listings <button class="btn btn-primary btn-sm" onclick="openAddListingModal()">+ Add Listing</button></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Crop</th><th>Quantity</th><th>Price</th><th>Status</th></tr></thead><tbody>${listings.map(l => `<tr><td class="fw-bold"><span class="crop-dot"></span>${l.crop}</td><td class="mono">${l.quantity} ${l.unit}</td><td class="mono">ZMW ${Number(l.price_per_unit).toFixed(2)}</td><td><span class="badge ${l.status==='available'?'badge-success':'badge-info'}">${cap(l.status)}</span></td></tr>`).join('')}</tbody></table></div>` : emptyState('No listings yet', 'Click "+ Add Listing" to list your produce.')}</div>`;
+        }
+        else if(tabId === 'jobs') {
+            const txns = await DB.get('transactions');
+            const jobs = txns.filter(t => t.need_transport && !t.transporter_id && t.status === 'paid_escrow');
+            container.innerHTML = `<div class="card"><div class="card-header">Available Transport Jobs</div>${jobs.length ? `<div class="table-wrap"><table><thead><tr><th>Job ID</th><th>Crop</th><th>Qty</th><th>Action</th></tr></thead><tbody>${jobs.map(t => `<tr><td class="mono">${t.id.substring(0,8)}</td><td class="fw-bold"><span class="crop-dot"></span>${t.crop}</td><td class="mono">${t.quantity} ${t.unit}</td><td><button class="btn btn-primary btn-sm" onclick="acceptJob('${t.id}')">Accept Job</button></td></tr>`).join('')}</tbody></table></div>` : emptyState('No jobs available', 'New transport requests will appear here.')}</div>`;
+        }
+        else if(tabId === 'transactions' || tabId === 'offers') {
             const txns = await DB.get('transactions');
             let filtered = txns;
             if(currentUser.role === 'buyer') filtered = txns.filter(t => t.buyer_id === currentUser.id);
             else if(currentUser.role === 'farmer') filtered = txns.filter(t => t.seller_id === currentUser.id);
+            else if(currentUser.role === 'transporter') filtered = txns.filter(t => t.transporter_id === currentUser.id);
             
             container.innerHTML = `<div class="card"><div class="card-header">Transactions <small>${filtered.length} total</small></div>${filtered.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>Crop</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody>${filtered.map(t => `<tr><td class="mono">${t.id.substring(0,8)}</td><td class="fw-bold"><span class="crop-dot"></span>${t.crop}</td><td class="fw-bold mono">ZMW ${Number(t.total_amount).toFixed(2)}</td><td><span class="badge ${statusClass(t.status)}">${statusLabel(t.status)}</span></td><td><button class="btn btn-outline btn-sm" onclick="openTransactionDetails('${t.id}')">Track flow</button></td></tr>`).join('')}</tbody></table></div>` : emptyState('No transactions yet', 'Completed purchases and deliveries will be tracked here.')}</div>`;
         }
     } catch(e) { container.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`; }
+}
+
+/* --- ACTIONS --- */
+function openAddListingModal() {
+    document.getElementById('modalTitle').textContent = 'Create Listing';
+    document.getElementById('modalBody').innerHTML = `
+        <div class="form-group"><label>Crop Name</label><input type="text" id="listCrop" class="form-control" placeholder="e.g. Maize"></div>
+        <div class="form-group"><label>Quantity</label><input type="number" id="listQty" class="form-control" placeholder="e.g. 500"></div>
+        <div class="form-group"><label>Price per Unit (ZMW)</label><input type="number" id="listPrice" class="form-control" placeholder="e.g. 4.50"></div>
+    `;
+    document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveListing()">Save Listing</button>
+    `;
+    document.getElementById('modal').classList.add('active');
+}
+
+async function saveListing() {
+    const crop = document.getElementById('listCrop').value;
+    const qty = document.getElementById('listQty').value;
+    const price = document.getElementById('listPrice').value;
+    if(!crop || !qty || !price) return alert('Fill all fields');
+    
+    await DB.insert('listings', {
+        id: 'L-' + Date.now(), farmer_id: currentUser.id, farmer_name: currentUser.name,
+        crop, quantity: qty, unit: 'kg', price_per_unit: price, status: 'available', created_at: new Date().toISOString()
+    });
+    closeModal();
+    switchTab('listings', document.querySelector('[data-tab="listings"]'));
+}
+
+function openAddPriceModal() {
+    document.getElementById('modalTitle').textContent = 'Add Market Price';
+    document.getElementById('modalBody').innerHTML = `
+        <div class="form-group"><label>Crop</label><input type="text" id="priceCrop" class="form-control" placeholder="e.g. Maize"></div>
+        <div class="form-group"><label>Market Location</label><input type="text" id="priceMarket" class="form-control" placeholder="e.g. Lusaka"></div>
+        <div class="form-group"><label>Price (ZMW)</label><input type="number" id="priceAmt" class="form-control" placeholder="e.g. 5.20"></div>
+    `;
+    document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="savePrice()">Save Price</button>
+    `;
+    document.getElementById('modal').classList.add('active');
+}
+
+async function savePrice() {
+    const crop = document.getElementById('priceCrop').value;
+    const market = document.getElementById('priceMarket').value;
+    const price = document.getElementById('priceAmt').value;
+    if(!crop || !market || !price) return alert('Fill all fields');
+    
+    await DB.insert('prices', {
+        id: 'P-' + Date.now(), crop, market, price, unit: 'kg', updated: new Date().toISOString()
+    });
+    closeModal();
+    switchTab('prices', document.querySelector('[data-tab="prices"]'));
+}
+
+async function acceptJob(txnId) {
+    await DB.update('transactions', txnId, { transporter_id: currentUser.id, status: 'in_transit' });
+    switchTab('jobs', document.querySelector('[data-tab="jobs"]'));
+}
+
+async function verifyUser(id) { 
+    await DB.update('users', id, { verified: true }); 
+    switchTab('users', document.querySelector('[data-tab="users"]')); 
 }
 
 /* --- FEATURE: TRANSACTION TIMELINE --- */
@@ -608,7 +690,6 @@ async function openReceipt(txnId) {
 
 /* --- HELPERS --- */
 function closeModal() { document.getElementById('modal').classList.remove('active'); }
-async function verifyUser(id) { await DB.update('users', id, { verified: true }); switchTab('users', document.querySelector('[data-tab="users"]')); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 </script>
