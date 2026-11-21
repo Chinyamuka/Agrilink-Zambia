@@ -156,14 +156,28 @@ td.mono,.mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 .receipt-note{text-align:center;margin-top:16px;font-size:10.5px;color:#8a927f;line-height:1.5}
 .text-muted{color:var(--muted)} .fw-bold{font-weight:600}
 
+
+.alert-ok{background:var(--green-100);color:var(--green-800);border:1px solid var(--green-300)}
+.filters{display:flex;flex-wrap:wrap;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.filters .form-control{width:auto;flex:1;min-width:140px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn-danger{background:transparent;border-color:#e3b9b0;color:var(--danger)}
+.btn-danger:hover{background:#f8e3de}
+.link-btn{background:none;border:none;color:var(--green-700);font:600 13px var(--sans);cursor:pointer;margin-top:16px;width:100%;padding:6px}
+.up{color:var(--green-700);font-weight:600}.down{color:var(--danger);font-weight:600}
+.note-item{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.note-item:last-child{border-bottom:none}.note-item small{color:var(--muted);white-space:nowrap}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green-900);color:#fff;padding:11px 18px;border-radius:8px;z-index:4000;box-shadow:var(--shadow);font-weight:500}
+.toast.bad{background:var(--danger)}
+select.form-control{appearance:auto}
+@media (max-width:560px){.form-row{grid-template-columns:1fr}}
 @media (max-width:900px){
   .landing-container{flex-direction:column}
   .brand-panel{padding:32px 24px;flex:none;gap:28px}.brand-tagline{font-size:32px}
   .auth-panel{padding:24px 16px}
   .main-content{padding:20px 16px 40px}.page-title{font-size:23px}
   #navUserName{display:none}.user-badge{padding:5px}
-  .sidebar{width:var(--rail-open)}
-  .sidebar-brand .text,.nav-item .label{opacity:1}
 }
 @media print{
   body>*:not(#modal){display:none!important}
@@ -192,26 +206,43 @@ td.mono,.mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
   </div>
   <div class="auth-panel">
     <div class="auth-card">
-      <h2>Welcome back</h2>
-      <p class="sub">Sign in to access your dashboard.</p>
       <div id="authAlert"></div>
-      <div class="form-group">
-        <label for="loginIdentifier">Phone or email</label>
-        <input type="text" id="loginIdentifier" class="form-control" placeholder="e.g. 0977123456" autocomplete="username">
-      </div>
-      <div class="form-group">
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" autocomplete="current-password">
-      </div>
-      <button class="btn btn-primary" onclick="handleLogin()">Sign in</button>
-      <div class="demo-roles">
-        <div class="demo-title">Try a demo account</div>
-        <div class="demo-grid">
-          <button class="demo-btn" onclick="fillDemo('admin')">Admin</button>
-          <button class="demo-btn" onclick="fillDemo('farmer')">Farmer</button>
-          <button class="demo-btn" onclick="fillDemo('buyer')">Buyer</button>
-          <button class="demo-btn" onclick="fillDemo('transporter')">Transporter</button>
+      <div id="loginForm">
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in to access your dashboard.</p>
+        <div class="form-group"><label for="loginIdentifier">Phone or email</label>
+          <input type="text" id="loginIdentifier" class="form-control" placeholder="e.g. 0977123456" autocomplete="username"></div>
+        <div class="form-group"><label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" autocomplete="current-password"></div>
+        <button class="btn btn-primary" onclick="handleLogin()">Sign in</button>
+        <button class="link-btn" onclick="authView('register')">New to AgriLink? Create an account</button>
+        <div class="demo-roles">
+          <div class="demo-title">Try a demo account</div>
+          <div class="demo-grid">
+            <button class="demo-btn" onclick="fillDemo('admin')">Admin</button>
+            <button class="demo-btn" onclick="fillDemo('farmer')">Farmer</button>
+            <button class="demo-btn" onclick="fillDemo('cooperative')">Cooperative</button>
+            <button class="demo-btn" onclick="fillDemo('buyer')">Buyer</button>
+            <button class="demo-btn" onclick="fillDemo('transporter')">Transporter</button>
+          </div>
         </div>
+      </div>
+      <div id="registerForm" style="display:none">
+        <h2>Create an account</h2>
+        <p class="sub">An administrator verifies every account before it can trade.</p>
+        <div class="form-group"><label for="regName">Full name or organisation</label><input id="regName" class="form-control"></div>
+        <div class="form-row">
+          <div class="form-group"><label for="regPhone">Phone</label><input id="regPhone" class="form-control" placeholder="0977123456"></div>
+          <div class="form-group"><label for="regEmail">Email (optional)</label><input id="regEmail" type="email" class="form-control"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="regRole">I am a</label>
+            <select id="regRole" class="form-control"><option value="farmer">Farmer</option><option value="cooperative">Cooperative</option><option value="buyer">Buyer</option><option value="transporter">Transporter</option></select></div>
+          <div class="form-group"><label for="regLocation">Location</label><input id="regLocation" class="form-control" placeholder="e.g. Kabwe"></div>
+        </div>
+        <div class="form-group"><label for="regPassword">Password (6+ characters)</label><input id="regPassword" type="password" class="form-control" autocomplete="new-password"></div>
+        <button class="btn btn-primary" onclick="handleRegister()">Submit registration</button>
+        <button class="link-btn" onclick="authView('login')">Back to sign in</button>
       </div>
     </div>
   </div>
@@ -245,7 +276,7 @@ td.mono,.mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 </div>
 
 <script>
-/* --- ICONS --- */
+/* --- ICONS (presentation only) --- */
 const ICONS = {
   leaf:'<path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15"/><path d="M5 19c2-5 5-8 9-10"/>',
   shield:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
@@ -295,410 +326,436 @@ const DB = {
     }
 };
 
-/* --- VIEW HELPERS --- */
+/* --- VIEW HELPERS (presentation only) --- */
 const initials = n => (n || '?').split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
 const cap = s => (s || '').charAt(0).toUpperCase() + (s || '').slice(1);
 const statusLabel = s => cap(String(s || '').replace(/_/g, ' '));
-const statusClass = s => ({ completed: 'badge-success', delivered: 'badge-success', paid_escrow: 'badge-warning', accepted: 'badge-warning', in_transit: 'badge-info' }[s] || 'badge-info');
+const STATUS_CLASS = { completed: 'badge-success', delivered: 'badge-success', in_transit: 'badge-info' };
+const statusClass = s => STATUS_CLASS[s] || 'badge-info';
 const emptyState = (title, hint) => `<div class="empty"><strong>${title}</strong>${hint}</div>`;
 
+/* --- UTIL --- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = n => 'ZMW ' + Number(n || 0).toFixed(2);
+const fmtDT = d => d ? new Date(d).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+const fmtD = d => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+const newest = (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0);
+const byId = (arr, id) => arr.find(x => x.id === id);
+const sha = async s => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map(b => b.toString(16).padStart(2, '0')).join('');
+const isSeller = () => ['farmer', 'cooperative'].includes(currentUser.role);
+const notify = (uid, message) => DB.insert('notifications', { user_id: uid, message }).catch(() => {});
+function toast(msg, bad) { const t = document.createElement('div'); t.className = 'toast' + (bad ? ' bad' : ''); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); }
+function openModal(title, body, footer) { $('modalTitle').textContent = title; $('modalBody').innerHTML = body; $('modalFooter').innerHTML = footer; $('modal').classList.add('active'); }
+async function act(fn, okMsg) { try { await fn(); closeModal(); if (okMsg) toast(okMsg); loadTabData(currentTab); } catch (e) { toast('Action failed: ' + e.message, true); } }
+const btn = (label, fn, cls = 'btn-primary') => `<button class="btn ${cls} btn-sm" onclick="${fn}">${label}</button>`;
+const card = (title, note, body) => `<div class="card"><div class="card-header">${title}<small>${note || ''}</small></div>${body}</div>`;
+const tbl = (head, rows, empty) => rows.length ? `<div class="table-wrap"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>` : empty;
+Object.assign(ICONS, { bell: '<path d="M6 17V11a6 6 0 0112 0v6l2 2H4zM10 21h4"/>', tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/>' });
+Object.assign(STATUS_CLASS, { cancelled: 'badge-danger', rejected: 'badge-danger', withdrawn: 'badge-danger', pending: 'badge-warning', delivery_arranged: 'badge-info', accepted: 'badge-warning' });
+
+/* --- MARKET PRICE HELPERS --- */
+const refKey = (crop, unit) => String(crop).toLowerCase().trim() + '|' + String(unit || 'kg').toLowerCase().trim();
+function marketView(prices) {
+    const g = {};
+    prices.slice().sort((a, b) => new Date(b.recorded_at) - new Date(a.recorded_at)).forEach(p => { (g[p.crop.toLowerCase() + '|' + p.market.toLowerCase() + '|' + (p.unit || 'kg').toLowerCase()] ||= []).push(p); });
+    const rows = Object.values(g).map(a => ({ ...a[0], prev: a[1] })).sort((a, b) => a.crop.localeCompare(b.crop));
+    const acc = {};
+    rows.forEach(r => { (acc[refKey(r.crop, r.unit)] ||= []).push(Number(r.price_per_unit)); });
+    const ref = {};
+    Object.keys(acc).forEach(k => ref[k] = acc[k].reduce((a, b) => a + b, 0) / acc[k].length);
+    return { rows, ref };
+}
+function vsMarket(l, ref) {
+    const r = ref[refKey(l.crop, l.unit)];
+    if (!r) return '<span class="text-muted">No market data</span>';
+    const d = (Number(l.price_per_unit) - r) / r * 100;
+    if (d <= -1) return `<span class="badge badge-success">${Math.abs(d).toFixed(0)}% below market</span>`;
+    if (d >= 1) return `<span class="badge badge-warning">${d.toFixed(0)}% above market</span>`;
+    return '<span class="badge badge-info">At market</span>';
+}
+
 /* --- AUTH --- */
-let currentUser = null;
+let currentUser = null, currentTab = '';
 
 function fillDemo(role) {
     const creds = {
         admin: ['0966000000', 'admin123'],
         farmer: ['0977123456', 'farmer123'],
+        cooperative: ['0977444555', 'coop123'],
         buyer: ['0977000111', 'buyer123'],
         transporter: ['0977222333', 'trans123']
     };
-    document.getElementById('loginIdentifier').value = creds[role][0];
-    document.getElementById('loginPassword').value = creds[role][1];
-    document.getElementById('authAlert').innerHTML = '';
+    $('loginIdentifier').value = creds[role][0];
+    $('loginPassword').value = creds[role][1];
+    $('authAlert').innerHTML = '';
 }
-
+function authView(mode) {
+    $('loginForm').style.display = mode === 'login' ? 'block' : 'none';
+    $('registerForm').style.display = mode === 'register' ? 'block' : 'none';
+    $('authAlert').innerHTML = '';
+}
 async function handleLogin() {
-    const id = document.getElementById('loginIdentifier').value.trim();
-    const pw = document.getElementById('loginPassword').value;
-    if(!id || !pw) return showAlert('Please enter credentials');
+    const id = $('loginIdentifier').value.trim();
+    const pw = $('loginPassword').value;
+    if (!id || !pw) return showAlert('Please enter credentials');
     try {
-        const users = await DB.get('users', true); 
-        const user = users.find(u => (u.phone === id || u.email === id) && u.password === pw);
-        if(!user) return showAlert('Invalid credentials');
-        if(!user.verified) return showAlert('Account pending admin verification');
-        
+        const users = await DB.get('users', true);
+        const hash = await sha(pw);
+        const user = users.find(u => (u.phone === id || u.email === id) && (u.password === pw || u.password === hash));
+        if (!user) return showAlert('Invalid credentials');
+        if (user.rejected) return showAlert('This registration was rejected. Please contact the administrator.');
+        if (!user.verified) return showAlert('Account pending admin verification');
+
         currentUser = user;
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('appScreen').style.display = 'flex';
-        document.getElementById('navUserName').textContent = user.name + ' (' + user.role + ')';
-        document.getElementById('navUserInitial').textContent = initials(user.name);
+        $('authScreen').style.display = 'none';
+        $('appScreen').style.display = 'flex';
+        $('navUserName').textContent = user.name + ' (' + user.role + ')';
+        $('navUserInitial').textContent = initials(user.name);
         buildSidebar();
-    } catch(e) { showAlert('Connection failed: ' + e.message); }
+    } catch (e) { showAlert('Connection failed: ' + e.message); }
 }
-function showAlert(msg) { document.getElementById('authAlert').innerHTML = `<div class="alert alert-error">${msg}</div>`; }
-function handleLogout() { currentUser = null; DB.clearCache(); document.getElementById('appScreen').style.display = 'none'; document.getElementById('authScreen').style.display = 'flex'; document.getElementById('loginPassword').value = ''; }
+async function handleRegister() {
+    const v = id => $(id).value.trim();
+    const d = { name: v('regName'), phone: v('regPhone'), email: v('regEmail') || null, role: $('regRole').value, location: v('regLocation'), password: $('regPassword').value };
+    if (!d.name || !d.location) return showAlert('Enter your name and location');
+    if (!/^\+?\d{9,13}$/.test(d.phone)) return showAlert('Enter a valid phone number, e.g. 0977123456');
+    if (d.password.length < 6) return showAlert('Password must be at least 6 characters');
+    try {
+        const users = await DB.get('users', true);
+        if (users.some(u => u.phone === d.phone || (d.email && u.email === d.email))) return showAlert('An account with this phone or email already exists');
+        d.password = await sha(d.password); d.verified = false; d.rejected = false;
+        await DB.insert('users', d);
+        authView('login');
+        $('authAlert').innerHTML = '<div class="alert alert-ok">Registration received. An administrator must verify your account before you can sign in.</div>';
+    } catch (e) { showAlert('Registration failed: ' + e.message); }
+}
+function showAlert(msg) { $('authAlert').innerHTML = `<div class="alert alert-error">${esc(msg)}</div>`; }
+function handleLogout() { currentUser = null; currentTab = ''; DB.clearCache(); $('appScreen').style.display = 'none'; $('authScreen').style.display = 'flex'; $('loginPassword').value = ''; authView('login'); }
 
-/* --- SIDEBAR & NAVIGATION --- */
+/* --- SIDEBAR & NAVIGATION (role-based access) --- */
 function buildSidebar() {
-    const nav = document.getElementById('sidebarNav');
-    let items = [];
-    
-    if(currentUser.role === 'admin') {
-        items = [
-            { id: 'dashboard', icon: 'chart', label: 'Dashboard' },
-            { id: 'users', icon: 'users', label: 'User Verification' },
-            { id: 'prices', icon: 'coins', label: 'Manage Prices' },
-            { id: 'all_listings', icon: 'leaf', label: 'All Listings' }
-        ];
-    } else if(currentUser.role === 'buyer') {
-        items = [
-            { id: 'browse', icon: 'cart', label: 'Browse Produce' },
-            { id: 'transactions', icon: 'file', label: 'My Purchases' }
-        ];
-    } else if(currentUser.role === 'farmer' || currentUser.role === 'cooperative') {
-        items = [
-            { id: 'my_listings', icon: 'leaf', label: 'My Listings' },
-            { id: 'offers', icon: 'inbox', label: 'Offers Received' },
-            { id: 'transactions', icon: 'file', label: 'Transactions' }
-        ];
-    } else if(currentUser.role === 'transporter') {
-        items = [
-            { id: 'jobs', icon: 'truck', label: 'Available Jobs' },
-            { id: 'transactions', icon: 'file', label: 'My Deliveries' }
-        ];
-    }
-
-    nav.innerHTML = items.map((item, index) => `
+    const r = currentUser.role;
+    const prices = { id: 'prices', icon: 'tag', label: 'Market Prices' };
+    const notes = { id: 'notifications', icon: 'bell', label: 'Notifications' };
+    const items = {
+        admin: [{ id: 'dashboard', icon: 'chart', label: 'Dashboard' }, { id: 'users', icon: 'users', label: 'User Verification' }, { id: 'prices', icon: 'coins', label: 'Manage Prices' }, { id: 'transactions', icon: 'file', label: 'All Transactions' }],
+        buyer: [{ id: 'browse', icon: 'cart', label: 'Browse Produce' }, prices, { id: 'offers', icon: 'inbox', label: 'My Offers' }, { id: 'transactions', icon: 'file', label: 'My Purchases' }, notes],
+        farmer: [{ id: 'listings', icon: 'leaf', label: 'My Listings' }, prices, { id: 'offers', icon: 'inbox', label: 'Offers Received' }, { id: 'transactions', icon: 'file', label: 'Transactions' }, notes],
+        transporter: [{ id: 'jobs', icon: 'truck', label: 'Available Jobs' }, { id: 'transactions', icon: 'file', label: 'My Deliveries' }, notes]
+    };
+    items.cooperative = items.farmer;
+    const list = items[r] || [];
+    $('sidebarNav').innerHTML = list.map((item, index) => `
         <a class="nav-item ${index === 0 ? 'active' : ''}" data-tab="${item.id}" onclick="switchTab('${item.id}', this)">
             <span class="icon">${ico(item.icon)}</span>
             <span class="label">${item.label}</span>
-        </a>
-    `).join('');
-
-    switchTab(items[0].id, nav.querySelector('.nav-item'));
+        </a>`).join('');
+    switchTab(list[0].id, $('sidebarNav').querySelector('.nav-item'));
 }
-
 function switchTab(tabId, element) {
     document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => el.classList.remove('active'));
-    if(element) element.classList.add('active');
-    
-    const label = element ? element.querySelector('.label').textContent : 'Dashboard';
-    document.getElementById('pageTitle').textContent = label;
-
+    if (element) element.classList.add('active');
+    $('pageTitle').textContent = element ? element.querySelector('.label').textContent : 'Dashboard';
     loadTabData(tabId);
 }
-
-/* --- TAB DATA --- */
+const T = {};
 async function loadTabData(tabId) {
-    const container = document.getElementById('tabContent');
+    currentTab = tabId;
+    const container = $('tabContent');
     container.innerHTML = '<div class="card"><div class="card-body text-muted">Loading data...</div></div>';
-    
     try {
-        if(tabId === 'dashboard') {
-            const users = await DB.get('users');
-            const listings = await DB.get('listings');
-            const roles = ['farmer', 'buyer', 'transporter', 'cooperative', 'admin'];
-            const byRole = roles.map(r => [r, users.filter(u => u.role === r).length]).filter(x => x[1] > 0);
-            const maxRole = Math.max(1, ...byRole.map(x => x[1]));
-            const lStat = ['available', 'sold'].map(s => [s, listings.filter(l => l.status === s).length]);
-            const maxL = Math.max(1, ...lStat.map(x => x[1]));
-            container.innerHTML = `
-                <div class="grid-stats">
-                    <div class="stat-card"><div class="stat-title">Total users</div><div class="stat-value">${users.length}</div></div>
-                    <div class="stat-card brown"><div class="stat-title">Active listings</div><div class="stat-value">${listings.filter(l=>l.status==='available').length}</div></div>
-                    <div class="stat-card dark"><div class="stat-title">Pending users</div><div class="stat-value">${users.filter(u=>!u.verified).length}</div><div class="stat-note">Awaiting verification</div></div>
-                </div>
-                <div class="split">
-                    <div class="card"><div class="card-header">Users by role</div><div class="card-body bars">
-                        ${byRole.map(([r, n]) => `<div class="row"><span>${cap(r)}</span><div class="track"><div class="fill" style="width:${n / maxRole * 100}%"></div></div><span class="num">${n}</span></div>`).join('') || '<span class="text-muted">No users yet.</span>'}
-                    </div></div>
-                    <div class="card"><div class="card-header">Listing status</div><div class="card-body bars">
-                        ${lStat.map(([s, n]) => `<div class="row"><span>${cap(s)}</span><div class="track"><div class="fill ${s === 'sold' ? 'brown' : ''}" style="width:${n / maxL * 100}%"></div></div><span class="num">${n}</span></div>`).join('')}
-                    </div></div>
-                </div>
-                <div class="card">
-                    <div class="card-header">Platform overview</div>
-                    <div class="card-body text-muted">Welcome to the AgriLink Admin Dashboard. The cloud database is fully operational.</div>
-                </div>
-            `;
-        }
-        else if(tabId === 'users') {
-            const users = await DB.get('users');
-            container.innerHTML = `<div class="card"><div class="table-wrap"><table><thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody>${users.map(u => `<tr><td><div class="cell-user"><span class="avatar">${initials(u.name)}</span><span class="fw-bold">${u.name}</span></div></td><td>${cap(u.role)}</td><td>${u.verified ? '<span class="badge badge-success">Verified</span>' : '<span class="badge badge-warning">Pending</span>'}</td><td>${!u.verified ? `<button class="btn btn-primary btn-sm" onclick="verifyUser('${u.id}')">Approve</button>` : '-'}</td></tr>`).join('')}</tbody></table></div></div>`;
-        }
-        else if(tabId === 'prices') {
-            const prices = await DB.get('prices');
-            container.innerHTML = `<div class="card"><div class="card-header">Market Prices <button class="btn btn-primary btn-sm" onclick="openAddPriceModal()">+ Add Price</button></div><div class="table-wrap"><table><thead><tr><th>Crop</th><th>Market</th><th>Price</th></tr></thead><tbody>${prices.map(p => `<tr><td class="fw-bold"><span class="crop-dot"></span>${p.crop}</td><td>${p.market}</td><td class="fw-bold mono">ZMW ${Number(p.price).toFixed(2)}</td></tr>`).join('')}</tbody></table></div></div>`;
-        }
-        else if(tabId === 'browse' || tabId === 'all_listings' || tabId === 'my_listings') {
-            const listings = await DB.get('listings');
-            let filtered = listings;
-            if (tabId === 'my_listings') filtered = listings.filter(l => l.farmer_id === currentUser.id);
-            if (tabId === 'browse') filtered = listings.filter(l => l.status === 'available');
-            
-            container.innerHTML = `
-                <div class="card">
-                    <div class="card-header">Produce Listings ${tabId === 'my_listings' ? '<button class="btn btn-primary btn-sm" onclick="openAddListingModal()">+ New Listing</button>' : ''}</div>
-                    <div class="table-wrap"><table><thead><tr><th>Crop</th><th>Quantity</th><th>Price</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody>${filtered.map(l => `<tr><td class="fw-bold"><span class="crop-dot"></span>${l.crop}</td><td class="mono">${l.quantity} ${l.unit}</td><td class="mono">ZMW ${Number(l.price_per_unit).toFixed(2)}</td><td><span class="badge ${l.status==='available'?'badge-success':'badge-info'}">${cap(l.status)}</span></td><td>${l.status === 'available' && currentUser.role === 'buyer' ? `<button class="btn btn-primary btn-sm" onclick="openPaymentModal('${l.id}')">Buy Now</button>` : '-'}</td></tr>`).join('')}</tbody></table></div>
-                </div>
-            `;
-        }
-        else if(tabId === 'jobs') {
-            const txns = await DB.get('transactions');
-            const jobs = txns.filter(t => t.need_transport && !t.transporter_id && t.status === 'paid_escrow');
-            container.innerHTML = `<div class="card"><div class="card-header">Available Transport Jobs</div>${jobs.length ? `<div class="table-wrap"><table><thead><tr><th>Job ID</th><th>Crop</th><th>Qty</th><th>Action</th></tr></thead><tbody>${jobs.map(t => `<tr><td class="mono">${t.id.substring(0,8)}</td><td class="fw-bold"><span class="crop-dot"></span>${t.crop}</td><td class="mono">${t.quantity} ${t.unit}</td><td><button class="btn btn-primary btn-sm" onclick="acceptJob('${t.id}')">Accept Job</button></td></tr>`).join('')}</tbody></table></div>` : emptyState('No jobs available', 'New transport requests will appear here.')}</div>`;
-        }
-        else if(tabId === 'transactions' || tabId === 'offers') {
-            const txns = await DB.get('transactions');
-            let filtered = txns;
-            if(currentUser.role === 'buyer') filtered = txns.filter(t => t.buyer_id === currentUser.id);
-            else if(currentUser.role === 'farmer') filtered = txns.filter(t => t.seller_id === currentUser.id);
-            else if(currentUser.role === 'transporter') filtered = txns.filter(t => t.transporter_id === currentUser.id);
-            
-            container.innerHTML = `<div class="card"><div class="card-header">Transactions <small>${filtered.length} total</small></div>${filtered.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>Crop</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody>${filtered.map(t => `<tr><td class="mono">${t.id.substring(0,8)}</td><td class="fw-bold"><span class="crop-dot"></span>${t.crop}</td><td class="fw-bold mono">ZMW ${Number(t.total_amount).toFixed(2)}</td><td><span class="badge ${statusClass(t.status)}">${statusLabel(t.status)}</span></td><td><button class="btn btn-outline btn-sm" onclick="openTransactionDetails('${t.id}')">Track flow</button></td></tr>`).join('')}</tbody></table></div>` : emptyState('No transactions yet', 'Completed purchases and deliveries will be tracked here.')}</div>`;
-        }
-    } catch(e) { container.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`; }
+        DB.clearCache();
+        container.innerHTML = await T[tabId]();
+        if (tabId === 'browse') renderBrowse();
+    } catch (e) { container.innerHTML = `<div class="alert alert-error">Error: ${esc(e.message)}</div>`; }
 }
+const barRows = (pairs, cls) => { const m = Math.max(1, ...pairs.map(p => p[1])); return pairs.map(([k, n]) => `<div class="row"><span>${esc(cap(String(k).replace(/_/g, ' ')))}</span><div class="track"><div class="fill ${cls || ''}" style="width:${n / m * 100}%"></div></div><span class="num">${n}</span></div>`).join('') || '<span class="text-muted">Nothing to show yet.</span>'; };
 
-/* --- ACTIONS --- */
-function openAddListingModal() {
-    document.getElementById('modalTitle').textContent = 'Create Listing';
-    document.getElementById('modalBody').innerHTML = `
-        <div class="form-group"><label>Crop Name</label><input type="text" id="listCrop" class="form-control" placeholder="e.g. Maize"></div>
-        <div class="form-group"><label>Quantity</label><input type="number" id="listQty" class="form-control" placeholder="e.g. 500"></div>
-        <div class="form-group"><label>Price per Unit (ZMW)</label><input type="number" id="listPrice" class="form-control" placeholder="e.g. 4.50"></div>
-    `;
-    document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveListing()">Save Listing</button>
-    `;
-    document.getElementById('modal').classList.add('active');
+/* --- ADMIN --- */
+T.dashboard = async () => {
+    const [users, listings, txns] = await Promise.all([DB.get('users'), DB.get('listings'), DB.get('transactions')]);
+    const roles = ['farmer', 'cooperative', 'buyer', 'transporter', 'admin'].map(r => [r, users.filter(u => u.role === r).length]).filter(x => x[1]);
+    const sts = [...new Set(txns.map(t => t.status))].map(s => [s, txns.filter(t => t.status === s).length]);
+    const value = txns.filter(t => t.status === 'completed').reduce((a, t) => a + Number(t.total_amount), 0);
+    return `
+        <div class="grid-stats">
+            <div class="stat-card"><div class="stat-title">Total users</div><div class="stat-value">${users.length}</div></div>
+            <div class="stat-card brown"><div class="stat-title">Active listings</div><div class="stat-value">${listings.filter(l => l.status === 'available').length}</div></div>
+            <div class="stat-card dark"><div class="stat-title">Pending users</div><div class="stat-value">${users.filter(u => !u.verified && !u.rejected).length}</div><div class="stat-note">Awaiting verification</div></div>
+            <div class="stat-card"><div class="stat-title">Transactions</div><div class="stat-value">${txns.length}</div><div class="stat-note">${money(value)} completed</div></div>
+        </div>
+        <div class="split">
+            ${card('Users by role', '', `<div class="card-body bars">${barRows(roles)}</div>`)}
+            ${card('Transactions by status', '', `<div class="card-body bars">${barRows(sts, 'brown')}</div>`)}
+        </div>`;
+};
+T.users = async () => {
+    const users = (await DB.get('users')).slice().sort((a, b) => Number(a.verified) - Number(b.verified));
+    const st = u => u.verified ? '<span class="badge badge-success">Verified</span>' : u.rejected ? '<span class="badge badge-danger">Rejected</span>' : '<span class="badge badge-warning">Pending</span>';
+    const actions = u => u.role === 'admin' ? '-' : `<div class="row-actions">${!u.verified ? btn('Approve', `verifyUser('${u.id}')`) : ''}${!u.rejected ? btn(u.verified ? 'Revoke' : 'Reject', `rejectUser('${u.id}')`, 'btn-danger') : ''}</div>`;
+    return card('Accounts', `${users.length} registered`, tbl(['Name', 'Role', 'Contact', 'Location', 'Status', 'Action'],
+        users.map(u => `<tr><td><div class="cell-user"><span class="avatar">${initials(u.name)}</span><span class="fw-bold">${esc(u.name)}</span></div></td><td>${esc(cap(u.role))}</td><td class="mono">${esc(u.phone)}</td><td>${esc(u.location || '-')}</td><td>${st(u)}</td><td>${actions(u)}</td></tr>`), emptyState('No users yet', 'Registrations will appear here.')));
+};
+async function verifyUser(id) { await act(async () => { await DB.update('users', id, { verified: true, rejected: false }); notify(id, 'Your account has been verified. You can now trade on AgriLink.'); }, 'User verified'); }
+async function rejectUser(id) { if (!confirm('Reject or revoke this account?')) return; await act(() => DB.update('users', id, { verified: false, rejected: true }), 'Account rejected'); }
+
+/* --- MARKET PRICES (all roles read, admin writes) --- */
+T.prices = async () => {
+    const { rows } = marketView(await DB.get('market_prices'));
+    const admin = currentUser.role === 'admin';
+    const chg = r => { if (!r.prev) return '<span class="text-muted">New</span>'; const d = r.price_per_unit - r.prev.price_per_unit; return d === 0 ? '<span class="text-muted">No change</span>' : `<span class="${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'} ${Math.abs(d).toFixed(2)}</span>`; };
+    return card('Latest prices by market', admin ? btn('Add price', 'openPriceModal()') : `${rows.length} markets`,
+        tbl(['Crop', 'Market', 'Price', 'Change', 'Recorded', admin ? 'Action' : ''].filter(Boolean),
+            rows.map(r => `<tr><td class="fw-bold"><span class="crop-dot"></span>${esc(r.crop)}</td><td>${esc(r.market)}</td><td class="mono fw-bold">${money(r.price_per_unit)} / ${esc(r.unit || 'kg')}</td><td class="mono">${chg(r)}</td><td>${fmtD(r.recorded_at)}</td>${admin ? `<td>${btn('Update', `openPriceModal('${r.id}')`, 'btn-outline')}</td>` : ''}</tr>`),
+            emptyState('No price records yet', admin ? 'Use "Add price" to publish the first market price.' : 'The administrator has not published prices yet.')));
+};
+async function openPriceModal(id) {
+    const p = id ? byId(await DB.get('market_prices'), id) : {};
+    openModal(id ? 'Update market price' : 'Add market price', `
+        <div class="form-row"><div class="form-group"><label>Crop</label><input id="pCrop" class="form-control" list="cropList" value="${esc(p.crop || '')}" ${id ? 'readonly' : ''}></div>
+        <div class="form-group"><label>Market</label><input id="pMarket" class="form-control" list="marketList" value="${esc(p.market || '')}" ${id ? 'readonly' : ''}></div></div>
+        <div class="form-row"><div class="form-group"><label>Price (ZMW)</label><input id="pPrice" type="number" min="0" step="0.01" class="form-control" value="${p.price_per_unit || ''}"></div>
+        <div class="form-group"><label>Unit</label><input id="pUnit" class="form-control" value="${esc(p.unit || 'kg')}" ${id ? 'readonly' : ''}></div></div>
+        <datalist id="cropList"><option>Maize</option><option>Soya beans</option><option>Groundnuts</option><option>Tomatoes</option><option>Onions</option></datalist>
+        <datalist id="marketList"><option>Soweto Market, Lusaka</option><option>Kitwe Main Market</option><option>Kasumbalesa</option><option>Mongu Market</option></datalist>
+        <div class="text-muted" style="font-size:12px">Saving adds a new dated record, so price history is kept.</div>`,
+        `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="savePrice()">Save price</button>`);
 }
-
-async function saveListing() {
-    const crop = document.getElementById('listCrop').value;
-    const qty = document.getElementById('listQty').value;
-    const price = document.getElementById('listPrice').value;
-    if(!crop || !qty || !price) return alert('Fill all fields');
-    
-    await DB.insert('listings', {
-        id: 'L-' + Date.now(), farmer_id: currentUser.id, farmer_name: currentUser.name,
-        crop, quantity: qty, unit: 'kg', price_per_unit: price, status: 'available', created_at: new Date().toISOString()
-    });
-    closeModal();
-    switchTab('my_listings', document.querySelector('[data-tab="my_listings"]'));
-}
-
-function openAddPriceModal() {
-    document.getElementById('modalTitle').textContent = 'Add Market Price';
-    document.getElementById('modalBody').innerHTML = `
-        <div class="form-group"><label>Crop</label><input type="text" id="priceCrop" class="form-control" placeholder="e.g. Maize"></div>
-        <div class="form-group"><label>Market Location</label><input type="text" id="priceMarket" class="form-control" placeholder="e.g. Lusaka"></div>
-        <div class="form-group"><label>Price (ZMW)</label><input type="number" id="priceAmt" class="form-control" placeholder="e.g. 5.20"></div>
-    `;
-    document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="savePrice()">Save Price</button>
-    `;
-    document.getElementById('modal').classList.add('active');
-}
-
 async function savePrice() {
-    const crop = document.getElementById('priceCrop').value;
-    const market = document.getElementById('priceMarket').value;
-    const price = document.getElementById('priceAmt').value;
-    if(!crop || !market || !price) return alert('Fill all fields');
-    
-    await DB.insert('prices', {
-        id: 'P-' + Date.now(), crop, market, price, unit: 'kg', updated: new Date().toISOString()
-    });
-    closeModal();
-    switchTab('prices', document.querySelector('[data-tab="prices"]'));
+    const d = { crop: $('pCrop').value.trim(), market: $('pMarket').value.trim(), price_per_unit: parseFloat($('pPrice').value), unit: $('pUnit').value.trim() || 'kg' };
+    if (!d.crop || !d.market || !(d.price_per_unit > 0)) return toast('Enter crop, market and a price above zero', true);
+    await act(() => DB.insert('market_prices', { ...d, source: 'Administrator', recorded_at: new Date().toISOString() }), 'Price saved');
 }
 
-async function acceptJob(txnId) {
-    await DB.update('transactions', txnId, { transporter_id: currentUser.id, status: 'in_transit' });
-    switchTab('jobs', document.querySelector('[data-tab="jobs"]'));
+/* --- BUYER: BROWSE, COMPARE, OFFER --- */
+const BF = { crop: '', loc: '', max: '', minq: '' }, BD = {};
+T.browse = async () => {
+    const [ls, us, ps] = await Promise.all([DB.get('listings'), DB.get('users'), DB.get('market_prices')]);
+    Object.assign(BD, { ls, us, ref: marketView(ps).ref });
+    const f = (k, ph, type = 'text') => `<input class="form-control" type="${type}" placeholder="${ph}" value="${esc(BF[k])}" oninput="BF.${k}=this.value;renderBrowse()">`;
+    return card('Available produce', '<span id="bCount"></span>', `<div class="filters">${f('crop', 'Search crop')}${f('loc', 'Location')}${f('max', 'Max price (ZMW)', 'number')}${f('minq', 'Min quantity', 'number')}</div><div id="bTable"></div>`);
+};
+function renderBrowse() {
+    const q = BF.crop.toLowerCase(), lc = BF.loc.toLowerCase();
+    const rows = BD.ls.filter(l => l.status === 'available' && Number(l.quantity) > 0
+        && (!q || l.crop.toLowerCase().includes(q)) && (!lc || String(l.location || '').toLowerCase().includes(lc))
+        && (!BF.max || Number(l.price_per_unit) <= Number(BF.max)) && (!BF.minq || Number(l.quantity) >= Number(BF.minq)))
+        .sort((a, b) => a.crop.localeCompare(b.crop) || a.price_per_unit - b.price_per_unit);
+    const seen = {};
+    $('bCount').textContent = rows.length + ' listed';
+    $('bTable').innerHTML = tbl(['Crop', 'Seller', 'Location', 'Quantity', 'Price', 'Vs market', 'Action'], rows.map(l => {
+        const k = l.crop.toLowerCase() + '|' + (l.unit || ''), best = !seen[k]; seen[k] = 1;
+        const s = byId(BD.us, l.farmer_id);
+        return `<tr><td class="fw-bold"><span class="crop-dot"></span>${esc(l.crop)} ${best && rows.filter(x => x.crop.toLowerCase() === l.crop.toLowerCase()).length > 1 ? '<span class="badge badge-success">Best price</span>' : ''}</td>
+            <td>${esc(s ? s.name : '-')} ${s && s.verified ? '<span class="badge badge-success">Verified</span>' : ''}</td><td>${esc(l.location || '-')}</td>
+            <td class="mono">${l.quantity} ${esc(l.unit)}</td><td class="mono fw-bold">${money(l.price_per_unit)}</td><td>${vsMarket(l, BD.ref)}</td>
+            <td>${btn('Make offer', `openOfferModal('${l.id}')`)}</td></tr>`;
+    }), emptyState('No produce matches', 'Clear a filter or check back when farmers add listings.'));
+}
+async function openOfferModal(listingId) {
+    const l = byId(await DB.get('listings'), listingId);
+    if (!l) return;
+    openModal('Make an offer', `
+        <div class="txn-id"><div class="k">${esc(l.crop)} &middot; ${esc(l.location || '')}</div><div class="v">${l.quantity} ${esc(l.unit)} at ${money(l.price_per_unit)}</div></div>
+        <div class="form-row" style="margin-top:16px"><div class="form-group"><label>Quantity (${esc(l.unit)})</label><input id="oQty" type="number" min="1" max="${l.quantity}" class="form-control" value="${l.quantity}"></div>
+        <div class="form-group"><label>Your price per ${esc(l.unit)} (ZMW)</label><input id="oPrice" type="number" min="0" step="0.01" class="form-control" value="${l.price_per_unit}"></div></div>
+        <div class="form-group"><label><input type="checkbox" id="oTrans" onchange="$('oDrop').parentNode.style.display=this.checked?'block':'none'"> Request transport</label></div>
+        <div class="form-group" style="display:none"><label>Drop-off location</label><input id="oDrop" class="form-control" placeholder="e.g. Kitwe Main Market"></div>`,
+        `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="submitOffer('${l.id}')">Send offer</button>`);
+}
+async function submitOffer(listingId) {
+    const qty = parseFloat($('oQty').value), price = parseFloat($('oPrice').value), need = $('oTrans').checked, drop = $('oDrop').value.trim();
+    await act(async () => {
+        const l = byId(await DB.get('listings', true), listingId);
+        if (!l || l.status !== 'available') throw new Error('This listing is no longer available');
+        if (!(qty > 0) || qty > Number(l.quantity)) throw new Error('Quantity must be between 1 and ' + l.quantity);
+        if (!(price > 0)) throw new Error('Enter a price above zero');
+        if (need && !drop) throw new Error('Enter a drop-off location for transport');
+        await DB.insert('offers', { listing_id: l.id, buyer_id: currentUser.id, seller_id: l.farmer_id, crop: l.crop, quantity: qty, unit: l.unit, offered_price: price, status: 'pending', need_transport: need, delivery_location: need ? drop : null, created_at: new Date().toISOString() });
+        notify(l.farmer_id, `New offer on ${l.crop}: ${qty} ${l.unit} at ${money(price)}`);
+    }, 'Offer sent to the seller');
 }
 
-async function verifyUser(id) { 
-    await DB.update('users', id, { verified: true }); 
-    switchTab('users', document.querySelector('[data-tab="users"]')); 
+/* --- SELLER: LISTINGS --- */
+T.listings = async () => {
+    const mine = (await DB.get('listings')).filter(l => l.farmer_id === currentUser.id && l.status !== 'removed').sort(newest);
+    return card('My listings', btn('New listing', 'openListingModal()'), tbl(['Crop', 'Quantity', 'Asking price', 'Location', 'Available from', 'Status', 'Action'],
+        mine.map(l => `<tr><td class="fw-bold"><span class="crop-dot"></span>${esc(l.crop)}</td><td class="mono">${l.quantity} ${esc(l.unit)}</td><td class="mono">${money(l.price_per_unit)}</td><td>${esc(l.location || '-')}</td><td>${fmtD(l.available_date)}</td>
+            <td><span class="badge ${l.status === 'available' ? 'badge-success' : 'badge-info'}">${esc(cap(l.status))}</span></td>
+            <td><div class="row-actions">${l.status === 'available' ? btn('Edit', `openListingModal('${l.id}')`, 'btn-outline') + btn('Remove', `removeListing('${l.id}')`, 'btn-danger') : '-'}</div></td></tr>`),
+        emptyState('You have no listings', 'Use "New listing" to advertise your produce to verified buyers.')));
+};
+async function openListingModal(id) {
+    const l = id ? byId(await DB.get('listings'), id) : {};
+    openModal(id ? 'Edit listing' : 'New listing', `
+        <div class="form-row"><div class="form-group"><label>Crop</label><input id="lCrop" class="form-control" value="${esc(l.crop || '')}" placeholder="e.g. Maize"></div>
+        <div class="form-group"><label>Location</label><input id="lLoc" class="form-control" value="${esc(l.location || currentUser.location || '')}"></div></div>
+        <div class="form-row"><div class="form-group"><label>Quantity</label><input id="lQty" type="number" min="1" class="form-control" value="${l.quantity || ''}"></div>
+        <div class="form-group"><label>Unit</label><input id="lUnit" class="form-control" value="${esc(l.unit || 'kg')}"></div></div>
+        <div class="form-row"><div class="form-group"><label>Asking price per unit (ZMW)</label><input id="lPrice" type="number" min="0" step="0.01" class="form-control" value="${l.price_per_unit || ''}"></div>
+        <div class="form-group"><label>Available from</label><input id="lDate" type="date" class="form-control" value="${(l.available_date || new Date().toISOString()).slice(0, 10)}"></div></div>`,
+        `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveListing('${id || ''}')">Save listing</button>`);
+}
+async function saveListing(id) {
+    const d = { crop: $('lCrop').value.trim(), location: $('lLoc').value.trim(), quantity: parseFloat($('lQty').value), unit: $('lUnit').value.trim() || 'kg', price_per_unit: parseFloat($('lPrice').value), available_date: $('lDate').value || null };
+    if (!d.crop || !d.location || !(d.quantity > 0) || !(d.price_per_unit > 0)) return toast('Enter crop, location, quantity and price', true);
+    await act(() => id ? DB.update('listings', id, d) : DB.insert('listings', { ...d, status: 'available', farmer_id: currentUser.id, created_at: new Date().toISOString() }), id ? 'Listing updated' : 'Listing published');
+}
+async function removeListing(id) {
+    if (!confirm('Remove this listing? Pending offers on it will be rejected.')) return;
+    await act(async () => {
+        await DB.update('listings', id, { status: 'removed' });
+        for (const o of (await DB.get('offers', true)).filter(o => o.listing_id === id && o.status === 'pending')) { await DB.update('offers', o.id, { status: 'rejected' }); notify(o.buyer_id, `Your offer on ${o.crop} was closed because the listing was removed`); }
+    }, 'Listing removed');
 }
 
-/* --- FEATURE: TRANSACTION TIMELINE --- */
+/* --- OFFERS (seller decides, buyer tracks / withdraws) --- */
+T.offers = async () => {
+    const [offers, us] = await Promise.all([DB.get('offers'), DB.get('users')]);
+    const buyer = currentUser.role === 'buyer';
+    const mine = offers.filter(o => (buyer ? o.buyer_id : o.seller_id) === currentUser.id).sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1) || newest(a, b));
+    const act_ = o => o.status !== 'pending' ? '-' : buyer ? btn('Withdraw', `withdrawOffer('${o.id}')`, 'btn-danger') : `<div class="row-actions">${btn('Accept', `respondOffer('${o.id}',true)`)}${btn('Reject', `respondOffer('${o.id}',false)`, 'btn-danger')}</div>`;
+    return card(buyer ? 'My offers' : 'Offers received', `${mine.filter(o => o.status === 'pending').length} pending`, tbl(['Date', 'Crop', 'Quantity', 'Offer', 'Total', buyer ? 'Seller' : 'Buyer', 'Transport', 'Status', 'Action'],
+        mine.map(o => `<tr><td>${fmtD(o.created_at)}</td><td class="fw-bold"><span class="crop-dot"></span>${esc(o.crop)}</td><td class="mono">${o.quantity} ${esc(o.unit)}</td><td class="mono">${money(o.offered_price)}</td><td class="mono fw-bold">${money(o.quantity * o.offered_price)}</td>
+            <td>${esc((byId(us, buyer ? o.seller_id : o.buyer_id) || {}).name || '-')}</td><td>${o.need_transport ? 'To ' + esc(o.delivery_location) : 'Not needed'}</td><td><span class="badge ${statusClass(o.status)}">${statusLabel(o.status)}</span></td><td>${act_(o)}</td></tr>`),
+        emptyState(buyer ? 'You have not made any offers' : 'No offers yet', buyer ? 'Browse produce and make an offer to start a transaction.' : 'Buyers\' offers on your listings will appear here.')));
+};
+async function withdrawOffer(id) { await act(async () => { const o = byId(await DB.get('offers', true), id); await DB.update('offers', id, { status: 'withdrawn' }); notify(o.seller_id, `An offer on ${o.crop} was withdrawn`); }, 'Offer withdrawn'); }
+async function respondOffer(id, accept) {
+    await act(async () => {
+        const o = byId(await DB.get('offers', true), id);
+        if (!o || o.status !== 'pending') throw new Error('This offer is no longer pending');
+        if (!accept) { await DB.update('offers', id, { status: 'rejected' }); notify(o.buyer_id, `Your offer on ${o.crop} was rejected`); return; }
+        const l = byId(await DB.get('listings', true), o.listing_id);
+        if (!l || l.status !== 'available' || Number(l.quantity) < Number(o.quantity)) throw new Error('The listing no longer has enough stock');
+        const now = new Date().toISOString(), tid = 'TXN-' + Date.now().toString(36).toUpperCase();
+        const status = o.need_transport ? 'accepted' : 'delivery_arranged';
+        const hist = [{ status: 'offer_made', at: o.created_at || now }, { status: 'accepted', at: now }];
+        if (!o.need_transport) hist.push({ status: 'delivery_arranged', at: now });
+        await DB.insert('transactions', { id: tid, listing_id: l.id, offer_id: o.id, crop: o.crop, quantity: o.quantity, unit: o.unit, price_per_unit: o.offered_price, total_amount: o.quantity * o.offered_price, buyer_id: o.buyer_id, seller_id: o.seller_id, status, need_transport: o.need_transport, delivery_location: o.delivery_location, pickup_location: l.location, status_history: hist, created_at: now });
+        await DB.update('offers', id, { status: 'accepted' });
+        const left = Number(l.quantity) - Number(o.quantity);
+        await DB.update('listings', l.id, left > 0 ? { quantity: left } : { quantity: 0, status: 'sold' });
+        if (left <= 0) for (const x of (await DB.get('offers', true)).filter(x => x.listing_id === l.id && x.status === 'pending')) { await DB.update('offers', x.id, { status: 'rejected' }); notify(x.buyer_id, `Your offer on ${x.crop} was closed because the produce was sold`); }
+        notify(o.buyer_id, `Your offer on ${o.crop} was accepted (${tid})`);
+    }, accept ? 'Offer accepted, transaction created' : 'Offer rejected');
+}
+
+/* --- TRANSPORTER: JOBS --- */
+T.jobs = async () => {
+    const [ts, us] = await Promise.all([DB.get('transactions'), DB.get('users')]);
+    const jobs = ts.filter(t => t.need_transport && !t.transporter_id && t.status === 'accepted').sort(newest);
+    return card('Delivery requests', `${jobs.length} open`, tbl(['Request', 'Produce', 'Pickup', 'Drop-off', 'Seller', 'Action'],
+        jobs.map(t => `<tr><td class="mono">${esc(t.id)}</td><td class="fw-bold"><span class="crop-dot"></span>${esc(t.crop)} <span class="text-muted">${t.quantity} ${esc(t.unit)}</span></td><td>${esc(t.pickup_location || '-')}</td><td>${esc(t.delivery_location || '-')}</td><td>${esc((byId(us, t.seller_id) || {}).name || '-')}</td><td>${btn('Accept job', `acceptJob('${t.id}')`)}</td></tr>`),
+        emptyState('No delivery requests right now', 'Requests appear when a buyer asks for transport on an accepted offer.')));
+};
+async function acceptJob(id) {
+    await act(async () => {
+        const t = byId(await DB.get('transactions', true), id);
+        if (!t || t.transporter_id) throw new Error('Another transporter already took this job');
+        const now = new Date().toISOString();
+        await DB.update('transactions', id, { transporter_id: currentUser.id, status: 'delivery_arranged', status_history: [...(t.status_history || []), { status: 'delivery_arranged', at: now, by: currentUser.id }] });
+        [t.buyer_id, t.seller_id].forEach(u => notify(u, `${currentUser.name} will deliver ${t.crop} (${t.id})`));
+    }, 'Job accepted');
+}
+
+/* --- TRANSACTIONS & TRACKING --- */
+T.transactions = async () => {
+    const [ts, us] = await Promise.all([DB.get('transactions'), DB.get('users')]);
+    const r = currentUser.role, me = currentUser.id, nm = id => esc((byId(us, id) || {}).name || '-');
+    const mine = ts.filter(t => r === 'admin' || (r === 'buyer' ? t.buyer_id === me : r === 'transporter' ? t.transporter_id === me : t.seller_id === me)).sort(newest);
+    const party = t => r === 'buyer' ? nm(t.seller_id) : isSeller() ? nm(t.buyer_id) : `${nm(t.seller_id)} → ${nm(t.buyer_id)}`;
+    return card('Transactions', `${mine.length} total`, tbl(['ID', 'Crop', 'Total', r === 'buyer' ? 'Seller' : isSeller() ? 'Buyer' : 'Parties', 'Status', 'Action'],
+        mine.map(t => `<tr><td class="mono">${esc(t.id.substring(0, 12))}</td><td class="fw-bold"><span class="crop-dot"></span>${esc(t.crop)} <span class="text-muted">${t.quantity} ${esc(t.unit)}</span></td><td class="fw-bold mono">${money(t.total_amount)}</td><td>${party(t)}</td>
+            <td><span class="badge ${statusClass(t.status)}">${statusLabel(t.status)}</span></td><td>${txnActions(t)}</td></tr>`),
+        emptyState('No transactions yet', 'Accepted offers and deliveries are tracked here.')));
+};
+function txnActions(t) {
+    const r = currentUser.role, me = currentUser.id, a = [];
+    const driver = t.need_transport ? (r === 'transporter' && t.transporter_id === me) : (isSeller() && t.seller_id === me);
+    if (driver && t.status === 'delivery_arranged') a.push(btn('Start delivery', `setTxn('${t.id}','in_transit')`));
+    if (driver && t.status === 'in_transit') a.push(btn('Mark delivered', `setTxn('${t.id}','delivered')`));
+    if (r === 'buyer' && t.buyer_id === me && t.status === 'delivered') a.push(btn('Confirm receipt', `setTxn('${t.id}','completed')`));
+    if (isSeller() && t.seller_id === me && ['accepted', 'delivery_arranged'].includes(t.status)) a.push(btn('Cancel', `cancelTxn('${t.id}')`, 'btn-danger'));
+    a.push(btn('Track flow', `openTransactionDetails('${t.id}')`, 'btn-outline'));
+    return `<div class="row-actions">${a.join('')}</div>`;
+}
+async function setTxn(id, status) {
+    await act(async () => {
+        const t = byId(await DB.get('transactions', true), id);
+        await DB.update('transactions', id, { status, status_history: [...(t.status_history || []), { status, at: new Date().toISOString(), by: currentUser.id }] });
+        [t.buyer_id, t.seller_id, t.transporter_id].filter(u => u && u !== currentUser.id).forEach(u => notify(u, `${t.crop} (${t.id}) is now ${statusLabel(status).toLowerCase()}`));
+    }, 'Status updated');
+}
+async function cancelTxn(id) {
+    if (!confirm('Cancel this transaction? The produce returns to your listing.')) return;
+    await act(async () => {
+        const t = byId(await DB.get('transactions', true), id);
+        await DB.update('transactions', id, { status: 'cancelled', status_history: [...(t.status_history || []), { status: 'cancelled', at: new Date().toISOString(), by: currentUser.id }] });
+        const l = byId(await DB.get('listings', true), t.listing_id);
+        if (l && l.status !== 'removed') await DB.update('listings', l.id, { quantity: Number(l.quantity) + Number(t.quantity), status: 'available' });
+        [t.buyer_id, t.transporter_id].filter(Boolean).forEach(u => notify(u, `${t.crop} (${t.id}) was cancelled by the seller`));
+    }, 'Transaction cancelled');
+}
+
+/* --- FEATURE: TRANSACTION TIMELINE (Figure 3 workflow) --- */
 async function openTransactionDetails(txnId) {
-    const txns = await DB.get('transactions');
-    const t = txns.find(x => x.id === txnId);
-    if(!t) return;
-
-    let currentStep = 0;
-    if (t.status === 'paid_escrow' || t.status === 'accepted') currentStep = 1;
-    if (t.status === 'in_transit') currentStep = 2;
-    if (t.status === 'delivered') currentStep = 3;
-    if (t.status === 'completed') currentStep = 4;
-
+    const t = byId(await DB.get('transactions'), txnId);
+    if (!t) return;
     const steps = [
-        { title: 'Offer Made', desc: 'Buyer initiated the transaction' },
-        { title: 'Payment Secured', desc: 'Funds held in simulated Escrow' },
-        { title: 'In Transit', desc: 'Transporter is moving the goods' },
-        { title: 'Delivered', desc: 'Goods arrived at destination' },
-        { title: 'Completed', desc: 'Funds released to farmer' }
+        { key: 'listed', title: 'Listed', desc: 'Seller published the produce' },
+        { key: 'offer_made', title: 'Offer made', desc: 'Buyer sent an offer' },
+        { key: 'accepted', title: 'Offer accepted', desc: 'Seller accepted the terms' },
+        { key: 'delivery_arranged', title: 'Delivery arranged', desc: t.need_transport ? 'Transporter assigned' : 'Seller arranges delivery' },
+        { key: 'in_transit', title: 'In transit', desc: 'Produce is on its way' },
+        { key: 'delivered', title: 'Delivered', desc: 'Produce arrived at destination' },
+        { key: 'completed', title: 'Completed', desc: 'Buyer confirmed receipt' }
     ];
-
-    const timelineHtml = steps.map((step, index) => {
-        let stateClass = '';
-        if (index < currentStep) stateClass = 'completed';
-        if (index === currentStep) stateClass = 'current';
-        
-        let dotContent = index < currentStep ? '✓' : '';
-        if (index === currentStep) dotContent = '•';
-
-        return `
-            <div class="timeline-step ${stateClass}">
-                <div class="timeline-dot">${dotContent}</div>
-                <div class="timeline-content">
-                    <h4>${step.title}</h4>
-                    <p>${step.desc}</p>
-                </div>
-            </div>
-        `;
+    const done = { accepted: 2, delivery_arranged: 3, in_transit: 4, delivered: 5, completed: 6, paid_escrow: 2 }[t.status] ?? 2;
+    const at = k => ((t.status_history || []).find(h => h.status === k) || {}).at;
+    const html = t.status === 'cancelled'
+        ? `<div class="alert alert-error">This transaction was cancelled${at('cancelled') ? ' on ' + fmtDT(at('cancelled')) : ''}.</div>` : '';
+    const line = steps.map((s, i) => {
+        const cls = i <= done ? 'completed' : i === done + 1 && t.status !== 'cancelled' ? 'current' : '';
+        return `<div class="timeline-step ${cls}"><div class="timeline-dot">${i <= done ? '✓' : cls ? '•' : ''}</div><div class="timeline-content"><h4>${s.title}</h4><p>${s.desc}${at(s.key) ? ' &middot; ' + fmtDT(at(s.key)) : ''}</p></div></div>`;
     }).join('');
-
-    document.getElementById('modalTitle').textContent = 'Transaction Tracking';
-    document.getElementById('modalBody').innerHTML = `
-        <div class="txn-id">
-            <div class="k">Transaction ID</div>
-            <div class="v">${t.id}</div>
-        </div>
-        <div class="timeline">
-            ${timelineHtml}
-        </div>
-    `;
-    
-    let footerHtml = `<button class="btn btn-outline" onclick="closeModal()">Close</button>`;
-    if (t.status !== 'available') {
-        footerHtml += `<button class="btn btn-primary" onclick="openReceipt('${t.id}')">View receipt</button>`;
-    }
-    document.getElementById('modalFooter').innerHTML = footerHtml;
-    document.getElementById('modal').classList.add('active');
+    openModal('Transaction tracking', `${html}<div class="txn-id"><div class="k">Transaction ID</div><div class="v">${esc(t.id)}</div></div><div class="timeline">${line}</div>`,
+        `<button class="btn btn-outline" onclick="closeModal()">Close</button><button class="btn btn-primary" onclick="openReceipt('${t.id}')">View record</button>`);
 }
-
-/* --- FEATURE: SIMULATED MOBILE MONEY & RECEIPT --- */
-let pendingListing = null;
-
-async function openPaymentModal(listingId) {
-    const listings = await DB.get('listings');
-    pendingListing = listings.find(l => l.id === listingId);
-    if(!pendingListing) return;
-
-    const total = pendingListing.quantity * pendingListing.price_per_unit;
-
-    document.getElementById('modalTitle').textContent = 'Simulated Mobile Money Checkout';
-    document.getElementById('modalBody').innerHTML = `
-        <div class="pay-head">
-            <div class="badge-ico">${ico('phone')}</div>
-            <h3>Pay with Mobile Money</h3>
-            <p class="text-muted">Secure simulated transaction</p>
-        </div>
-        <div class="form-group">
-            <label>Phone Number (MTN/Airtel)</label>
-            <input type="text" id="payPhone" class="form-control" value="${currentUser.phone}" placeholder="e.g. 0961234567">
-        </div>
-        <div class="form-group">
-            <label>Amount (ZMW)</label>
-            <input type="text" class="form-control fw-bold" value="${total.toFixed(2)}" readonly style="background: var(--brown-100);">
-        </div>
-        <div style="font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px;">
-            By clicking "Pay Now", you authorize a simulated transfer to Escrow.
-        </div>
-    `;
-    document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="processPayment()">Pay Now (Simulated)</button>
-    `;
-    document.getElementById('modal').classList.add('active');
-}
-
-async function processPayment() {
-    const btn = document.querySelector('#modalFooter .btn-primary');
-    btn.textContent = 'Processing...';
-    btn.disabled = true;
-
-    setTimeout(async () => {
-        const txnId = 'TXN-' + Math.floor(Math.random() * 1000000);
-        const txnData = {
-            id: txnId,
-            listing_id: pendingListing.id,
-            crop: pendingListing.crop,
-            quantity: pendingListing.quantity,
-            unit: pendingListing.unit,
-            price_per_unit: pendingListing.price_per_unit,
-            total_amount: pendingListing.quantity * pendingListing.price_per_unit,
-            buyer_id: currentUser.id,
-            seller_id: pendingListing.farmer_id,
-            status: 'paid_escrow',
-            need_transport: false,
-            created_at: new Date().toISOString()
-        };
-
-        try {
-            await DB.insert('transactions', txnData);
-            await DB.update('listings', pendingListing.id, { status: 'sold' });
-            
-            closeModal();
-            switchTab('transactions', document.querySelector('[data-tab="transactions"]'));
-            
-            setTimeout(() => openReceipt(txnId), 500);
-        } catch(e) {
-            alert('Payment failed: ' + e.message);
-            btn.textContent = 'Pay Now (Simulated)';
-            btn.disabled = false;
-        }
-    }, 1500);
-}
-
 async function openReceipt(txnId) {
-    const txns = await DB.get('transactions');
-    const t = txns.find(x => x.id === txnId);
-    if(!t) return;
-
-    const dateStr = new Date(t.created_at).toLocaleString();
-
-    document.getElementById('modalTitle').textContent = 'Official Digital Receipt';
-    document.getElementById('modalBody').innerHTML = `
+    const [ts, us] = await Promise.all([DB.get('transactions'), DB.get('users')]);
+    const t = byId(ts, txnId);
+    if (!t) return;
+    const nm = id => esc((byId(us, id) || {}).name || '-');
+    openModal('Transaction record', `
         <div class="receipt-box">
-            <div class="receipt-header">
-                <h3>AGRI-LINK ZAMBIA</h3>
-                <div>Digital Escrow Receipt</div>
-            </div>
-            <div class="receipt-row"><span>Txn ID:</span> <span>${t.id}</span></div>
-            <div class="receipt-row"><span>Date:</span> <span>${dateStr}</span></div>
-            <div class="receipt-row"><span>Buyer:</span> <span>${currentUser.name}</span></div>
-            <hr style="border: none; border-top: 1px dashed var(--line); margin: 12px 0;">
-            <div class="receipt-row"><span>Item:</span> <span>${t.crop}</span></div>
-            <div class="receipt-row"><span>Quantity:</span> <span>${t.quantity} ${t.unit}</span></div>
-            <div class="receipt-row"><span>Unit Price:</span> <span>ZMW ${Number(t.price_per_unit).toFixed(2)}</span></div>
-            <div class="receipt-total"><span>TOTAL PAID:</span> <span>ZMW ${Number(t.total_amount).toFixed(2)}</span></div>
-            <div class="receipt-stamp">PAID VIA MOMO</div>
-            <div class="receipt-note">
-                This is a simulated transaction generated for the AgriLink prototype.<br>
-                Funds held securely in Escrow until delivery is confirmed.
-            </div>
-        </div>
-    `;
-    document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-outline" onclick="closeModal()">Close</button>
-        <button class="btn btn-primary" onclick="window.print()">Print receipt</button>
-    `;
-    document.getElementById('modal').classList.add('active');
+            <div class="receipt-header"><h3>AGRI-LINK ZAMBIA</h3><div>Transaction Record</div></div>
+            <div class="receipt-row"><span>Txn ID:</span> <span>${esc(t.id)}</span></div>
+            <div class="receipt-row"><span>Date:</span> <span>${fmtDT(t.created_at)}</span></div>
+            <div class="receipt-row"><span>Seller:</span> <span>${nm(t.seller_id)}</span></div>
+            <div class="receipt-row"><span>Buyer:</span> <span>${nm(t.buyer_id)}</span></div>
+            <hr style="border:none;border-top:1px dashed var(--line);margin:12px 0">
+            <div class="receipt-row"><span>Item:</span> <span>${esc(t.crop)}</span></div>
+            <div class="receipt-row"><span>Quantity:</span> <span>${t.quantity} ${esc(t.unit)}</span></div>
+            <div class="receipt-row"><span>Agreed price:</span> <span>${money(t.price_per_unit)}</span></div>
+            <div class="receipt-row"><span>Delivery:</span> <span>${t.need_transport ? 'Transporter to ' + esc(t.delivery_location) : 'Arranged by seller'}</span></div>
+            <div class="receipt-total"><span>TOTAL:</span> <span>${money(t.total_amount)}</span></div>
+            <div class="receipt-stamp">${esc(statusLabel(t.status).toUpperCase())}</div>
+            <div class="receipt-note">Prototype record. Payments are settled outside the platform.</div>
+        </div>`, `<button class="btn btn-outline" onclick="closeModal()">Close</button><button class="btn btn-primary" onclick="window.print()">Print record</button>`);
 }
+
+/* --- NOTIFICATIONS --- */
+T.notifications = async () => {
+    const mine = (await DB.get('notifications')).filter(n => n.user_id === currentUser.id).sort(newest).slice(0, 40);
+    return card('Notifications', `${mine.length} recent`, mine.length ? `<div class="card-body">${mine.map(n => `<div class="note-item"><span>${esc(n.message)}</span><small>${fmtDT(n.created_at)}</small></div>`).join('')}</div>` : emptyState('No notifications yet', 'Offers, decisions and delivery updates will show up here.'));
+};
 
 /* --- HELPERS --- */
-function closeModal() { document.getElementById('modal').classList.remove('active'); }
+function closeModal() { $('modal').classList.remove('active'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+$('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 </script>
 </body>
 </html>
