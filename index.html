@@ -347,7 +347,8 @@ function buildSidebar() {
         items = [
             { id: 'dashboard', icon: 'chart', label: 'Dashboard' },
             { id: 'users', icon: 'users', label: 'User Verification' },
-            { id: 'prices', icon: 'coins', label: 'Manage Prices' }
+            { id: 'prices', icon: 'coins', label: 'Manage Prices' },
+            { id: 'all_listings', icon: 'leaf', label: 'All Listings' }
         ];
     } else if(currentUser.role === 'buyer') {
         items = [
@@ -356,7 +357,7 @@ function buildSidebar() {
         ];
     } else if(currentUser.role === 'farmer' || currentUser.role === 'cooperative') {
         items = [
-            { id: 'listings', icon: 'leaf', label: 'My Listings' },
+            { id: 'my_listings', icon: 'leaf', label: 'My Listings' },
             { id: 'offers', icon: 'inbox', label: 'Offers Received' },
             { id: 'transactions', icon: 'file', label: 'Transactions' }
         ];
@@ -429,13 +430,19 @@ async function loadTabData(tabId) {
             const prices = await DB.get('prices');
             container.innerHTML = `<div class="card"><div class="card-header">Market Prices <button class="btn btn-primary btn-sm" onclick="openAddPriceModal()">+ Add Price</button></div><div class="table-wrap"><table><thead><tr><th>Crop</th><th>Market</th><th>Price</th></tr></thead><tbody>${prices.map(p => `<tr><td class="fw-bold"><span class="crop-dot"></span>${p.crop}</td><td>${p.market}</td><td class="fw-bold mono">ZMW ${Number(p.price).toFixed(2)}</td></tr>`).join('')}</tbody></table></div></div>`;
         }
-        else if(tabId === 'browse') {
-            const listings = (await DB.get('listings')).filter(l=>l.status==='available');
-            container.innerHTML = `<div class="card"><div class="card-header">Available produce <small>${listings.length} listed</small></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Crop</th><th>Quantity</th><th>Price</th><th>Action</th></tr></thead><tbody>${listings.map(l => `<tr><td class="fw-bold"><span class="crop-dot"></span>${l.crop}</td><td class="mono">${l.quantity} ${l.unit}</td><td class="mono">ZMW ${Number(l.price_per_unit).toFixed(2)}</td><td><button class="btn btn-primary btn-sm" onclick="openPaymentModal('${l.id}')">Buy now</button></td></tr>`).join('')}</tbody></table></div>` : emptyState('No produce listed right now', 'New listings from farmers will appear here.')}</div>`;
-        }
-        else if(tabId === 'listings') {
-            const listings = (await DB.get('listings')).filter(l=>l.farmer_id === currentUser.id);
-            container.innerHTML = `<div class="card"><div class="card-header">My Listings <button class="btn btn-primary btn-sm" onclick="openAddListingModal()">+ Add Listing</button></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Crop</th><th>Quantity</th><th>Price</th><th>Status</th></tr></thead><tbody>${listings.map(l => `<tr><td class="fw-bold"><span class="crop-dot"></span>${l.crop}</td><td class="mono">${l.quantity} ${l.unit}</td><td class="mono">ZMW ${Number(l.price_per_unit).toFixed(2)}</td><td><span class="badge ${l.status==='available'?'badge-success':'badge-info'}">${cap(l.status)}</span></td></tr>`).join('')}</tbody></table></div>` : emptyState('No listings yet', 'Click "+ Add Listing" to list your produce.')}</div>`;
+        else if(tabId === 'browse' || tabId === 'all_listings' || tabId === 'my_listings') {
+            const listings = await DB.get('listings');
+            let filtered = listings;
+            if (tabId === 'my_listings') filtered = listings.filter(l => l.farmer_id === currentUser.id);
+            if (tabId === 'browse') filtered = listings.filter(l => l.status === 'available');
+            
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">Produce Listings ${tabId === 'my_listings' ? '<button class="btn btn-primary btn-sm" onclick="openAddListingModal()">+ New Listing</button>' : ''}</div>
+                    <div class="table-wrap"><table><thead><tr><th>Crop</th><th>Quantity</th><th>Price</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody>${filtered.map(l => `<tr><td class="fw-bold"><span class="crop-dot"></span>${l.crop}</td><td class="mono">${l.quantity} ${l.unit}</td><td class="mono">ZMW ${Number(l.price_per_unit).toFixed(2)}</td><td><span class="badge ${l.status==='available'?'badge-success':'badge-info'}">${cap(l.status)}</span></td><td>${l.status === 'available' && currentUser.role === 'buyer' ? `<button class="btn btn-primary btn-sm" onclick="openPaymentModal('${l.id}')">Buy Now</button>` : '-'}</td></tr>`).join('')}</tbody></table></div>
+                </div>
+            `;
         }
         else if(tabId === 'jobs') {
             const txns = await DB.get('transactions');
@@ -480,7 +487,7 @@ async function saveListing() {
         crop, quantity: qty, unit: 'kg', price_per_unit: price, status: 'available', created_at: new Date().toISOString()
     });
     closeModal();
-    switchTab('listings', document.querySelector('[data-tab="listings"]'));
+    switchTab('my_listings', document.querySelector('[data-tab="my_listings"]'));
 }
 
 function openAddPriceModal() {
